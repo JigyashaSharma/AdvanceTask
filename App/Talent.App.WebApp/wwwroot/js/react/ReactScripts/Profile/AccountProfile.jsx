@@ -49,6 +49,7 @@ export default class AccountProfile extends React.Component {
                 }
             },
             loaderData: loaderData,
+            errorCount: 0
         }
 
         this.updateWithoutSave = this.updateWithoutSave.bind(this)
@@ -109,6 +110,25 @@ export default class AccountProfile extends React.Component {
     }
     }
 
+    /*Currently added some minimal validation for input format*/
+    validateInput(fields) {
+        let valuesValid = true;
+
+        for (let fieldName of Object.keys(fields)) {
+            const fieldRule = fieldValidationRules.find(rule => rule.field === fieldName);
+
+            if (fieldRule && fields[fieldName]) {
+                const valid = fieldRule.regex.test(fields[fieldName]);
+                if (!valid) {
+                    TalentUtil.notification.show(fieldRule.errorMessage, "error", null, null);
+                    valuesValid = valid;
+                    break;
+                }
+            }
+        }
+
+        return valuesValid;
+    }
     saveProfile() {
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
@@ -168,8 +188,10 @@ export default class AccountProfile extends React.Component {
                                         >
                                             <SocialMediaLinkedAccount
                                                 linkedAccounts={this.state.profileData.linkedAccounts}
+                                                componentId="linkedAccounts"
                                                 updateProfileData={this.updateWithoutSave}
-                                                saveProfileData={this.updateAndSaveData}
+                                                saveProfileData={this.updateForComponentId}
+                                                validateFunc={this.validateInput }
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
