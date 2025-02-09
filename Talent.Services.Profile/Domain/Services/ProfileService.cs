@@ -207,12 +207,148 @@ namespace Talent.Services.Profile.Domain.Services
             return result;
         }
 
+        // This helper method creates a new TUserSubItem (UserSkill or UserLanguage) with common properties
+        private TUserSubItem CreateSubItem<TUserSubItem>(string userId) where TUserSubItem : class, new()
+        {
+            var subItem = Activator.CreateInstance<TUserSubItem>();
+            subItem.GetType().GetProperty("Id")?.SetValue(subItem, ObjectId.GenerateNewId().ToString());
+            subItem.GetType().GetProperty("UserId")?.SetValue(subItem, userId);
+            subItem.GetType().GetProperty("IsDeleted")?.SetValue(subItem, false);
+            return subItem;
+        }
+
+        // This helper method finds the sublist(Skills or Languages) inside the TUserItem
+        private List<TUserSubItem> GetSubItemList<TUserItem, TUserSubItem>(TUserItem existingItem)
+        {
+            if (existingItem is User user)
+            {
+                if (typeof(TUserSubItem) == typeof(UserSkill))
+                {
+                    return user.Skills as List<TUserSubItem>;
+                }
+                else if (typeof(TUserSubItem) == typeof(UserLanguage))
+                {
+                    return user.Languages as List<TUserSubItem>;
+                }
+            }
+            return null;
+        }
+
+        /*Template to update the objects like language, skill.. */
+        public List<TUserSubItem> UpdateUserItems<TModelItem, TUserItem, TUserSubItem>(
+            List<TModelItem> modelItems,
+            TUserItem existingItem,
+            Action<TModelItem, TUserSubItem> updateItemFunc,
+            string userId)
+            where TUserItem : class, new()
+            where TUserSubItem : class, new()
+        {
+            // Ensure existingItem and subItemList are not null
+            if (existingItem == null)
+            {
+                throw new ArgumentNullException(nameof(existingItem), "The existing item cannot be null.");
+            }
+            var subItemList = GetSubItemList<TUserItem, TUserSubItem>(existingItem) ?? new List<TUserSubItem>();
+            var newsubItemList = new List<TUserSubItem>();
+
+            foreach (var item in modelItems)
+            {
+                // Find the existing item by Id
+                var existingSubItem = subItemList.SingleOrDefault(x => x.GetType().GetProperty("Id")?.GetValue(x)?.ToString() == item.GetType().GetProperty("Id")?.GetValue(item)?.ToString());
+
+                if (existingSubItem == null)
+                {
+                    //If subITem is not there create it
+                    existingSubItem = CreateSubItem<TUserSubItem>(userId);
+                    if (existingSubItem == null)
+                    {
+                        throw new InvalidOperationException("Failed to create a new sub-item.");
+                    }
+
+                }
+
+                // Update the properties of the existing or newly created item using the provided update function
+                updateItemFunc(item, existingSubItem);
+                newsubItemList.Add(existingSubItem);  // Add the new item directly to the list
+            }
+
+            // Return the updated existingItems list
+            return newsubItemList;
         }
 
         public async Task<bool> UpdateTalentProfile(TalentProfileViewModel model, string updaterId)
         {
-            //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                User existingUser = await _userRepository.GetByIdAsync(updaterId);
+                if (existingUser == null)
+                {
+                    throw new Exception();
+                }
+
+                existingUser.FirstName = model.FirstName;
+                existingUser.MiddleName = model.MiddleName;
+                existingUser.LastName = model.LastName;
+                existingUser.Email = model.Email;
+                existingUser.Phone = model.Phone;
+                existingUser.MobilePhone = model.MobilePhone;
+                existingUser.IsMobilePhoneVerified  = model.IsMobilePhoneVerified;
+                existingUser.Address = model.Address;
+                existingUser.Nationality = model.Nationality;
+                existingUser.VisaStatus= model.VisaStatus;
+                existingUser.VisaExpiryDate = model.VisaExpiryDate;
+                existingUser.ProfilePhoto = model.ProfilePhoto;
+                existingUser.ProfilePhotoUrl = model.ProfilePhotoUrl;
+                existingUser.CvName = model.CvName;
+                existingUser.LinkedAccounts = model.LinkedAccounts;
+                existingUser.JobSeekingStatus = model.JobSeekingStatus;
+
+                existingUser.VideoName = model.VideoName;
+
+                existingUser.Skills = UpdateUserItems<AddSkillViewModel, User, UserSkill>(
+                    model.Skills,
+                    existingUser,
+                    UpdateSkillFromView,
+                    updaterId
+                    );
+
+                existingUser.Languages = UpdateUserItems<AddLanguageViewModel, User, UserLanguage>(
+                   model.Languages,
+                   existingUser,
+                   UpdateLanguageFromView,
+                   updaterId
+                   );
+
+                existingUser.Certifications = UpdateUserItems<AddCertificationViewModel, User, UserCertification>(
+                   model.Certifications,
+                   existingUser,
+                   UpdateCertificateFromView,
+                   updaterId
+                   );
+
+                existingUser.Education = UpdateUserItems<AddEducationViewModel, User, UserEducation>(
+                   model.Education,
+                   existingUser,
+                   UpdateEducationFromView,
+                   updaterId
+                   );
+
+                existingUser.Experience = UpdateUserItems<ExperienceViewModel, User, UserExperience>(
+                   model.Experience,
+                   existingUser,
+                   UpdateExperienceFromView,
+                   updaterId
+                   );
+
+                await _userRepository.Update(existingUser);
+                return true;
+
+            } catch (MongoException e)
+            {
+                return false;
+            }
+        }
+
         }
 
         public async Task<EmployerProfileViewModel> GetEmployerProfile(string Id, string role)
