@@ -20,6 +20,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.FileProviders;
+using MongoDB.Driver.Core.Configuration;
 
 namespace Talent.Services.Identity
 {
@@ -70,6 +73,16 @@ namespace Talent.Services.Identity
             //services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserAppContext, UserAppContext>();
             services.AddSingleton<IPasswordStorage, PasswordStorage>();
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "My Identity API",
+                    Version = "v1"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,6 +92,16 @@ namespace Talent.Services.Identity
             {
                 app.UseDeveloperExceptionPage();
             }
+            // Enable middleware to serve generated Swagger as a JSON endpoint
+            app.UseSwagger();
+            // Enable middleware to serve Swagger UI (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Identity API V1");
+                c.RoutePrefix = string.Empty;  // This makes Swagger UI available at the root (e.g., http://localhost:5000)
+            });
+
+            app.UseStaticFiles();  // Enable static file serving from wwwroot and other folders
             app.UseCors("AllowWebApp");
             app.UseMvc();
         }

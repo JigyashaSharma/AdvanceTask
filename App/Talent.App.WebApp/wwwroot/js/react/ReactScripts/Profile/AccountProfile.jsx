@@ -8,7 +8,7 @@ import Language from './Language.jsx';
 import Skill from './Skill.jsx';
 import Education from './Education.jsx';
 import Certificate from './Certificate.jsx';
-import VisaStatus from './VisaStatus.jsx'
+import VisaStatus from './VisaStatus.jsx';
 import PhotoUpload from './PhotoUpload.jsx';
 import VideoUpload from './VideoUpload.jsx';
 import CVUpload from './CVUpload.jsx';
@@ -17,6 +17,7 @@ import Experience from './Experience.jsx';
 import { BodyWrapper, loaderData } from '../Layout/BodyWrapper.jsx';
 import { LoggedInNavigation } from '../Layout/LoggedInNavigation.jsx';
 import TalentStatus from './TalentStatus.jsx';
+import { fieldValidationRules } from './ValidationRules.jsx';
 
 export default class AccountProfile extends React.Component {
     constructor(props) {
@@ -24,6 +25,10 @@ export default class AccountProfile extends React.Component {
 
         this.state = {
             profileData: {
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: '',
                 address: {},
                 nationality: '',
                 education: [],
@@ -33,7 +38,7 @@ export default class AccountProfile extends React.Component {
                 certifications: [],
                 visaStatus: '',
                 visaExpiryDate: '',
-                profilePhoto: '',
+                ProfilePhotoUrl: '',
                 linkedAccounts: {
                     linkedIn: "",
                     github: ""
@@ -44,7 +49,6 @@ export default class AccountProfile extends React.Component {
                 }
             },
             loaderData: loaderData,
-
         }
 
         this.updateWithoutSave = this.updateWithoutSave.bind(this)
@@ -53,6 +57,7 @@ export default class AccountProfile extends React.Component {
         this.saveProfile = this.saveProfile.bind(this)
         this.loadData = this.loadData.bind(this)
         this.init = this.init.bind(this);
+        this.validateInput = this.validateInput.bind(this);
     };
 
     init() {
@@ -69,7 +74,7 @@ export default class AccountProfile extends React.Component {
     loadData() {
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'http://localhost:60290/profile/profile/getTalentProfile',
+            url: `${profileApi}/profile/profile/getTalentProfile`,
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -98,13 +103,16 @@ export default class AccountProfile extends React.Component {
     }
 
     updateForComponentId(componentId, newValues) {
-        this.updateAndSaveData(newValues)
+        let data = {};
+        data[componentId] = newValues;
+        this.updateAndSaveData(data)
+    }
     }
 
     saveProfile() {
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'http://localhost:60290/profile/profile/updateTalentProfile',
+            url: `${profileApi}/profile/profile/updateTalentProfile`,
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -112,7 +120,13 @@ export default class AccountProfile extends React.Component {
             type: "POST",
             data: JSON.stringify(this.state.profileData),
             success: function (res) {
-                console.log(res)
+                this.loadData();
+                //resetting the error count in case we succeed after some errors
+                if (this.state.errorCount > 0) {
+                    this.setState({
+                        errorCount: 0
+                    })
+                }
                 if (res.success == true) {
                     TalentUtil.notification.show("Profile updated sucessfully", "success", null, null)
                 } else {
@@ -121,9 +135,14 @@ export default class AccountProfile extends React.Component {
 
             }.bind(this),
             error: function (res, a, b) {
-                console.log(res)
-                console.log(a)
-                console.log(b)
+                //trying to re-fetch data in case of error to make UI and backend consistent
+                const count = this.state.errorCount;
+                if (count < 5) {
+                    this.loadData();
+                    this.setState({
+                        errorCount: count + 1
+                    })
+                }
             }
         })
     }

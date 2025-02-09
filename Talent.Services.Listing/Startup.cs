@@ -23,6 +23,7 @@ using Talent.Services.Talent.Domain.Contracts;
 using Talent.Services.Talent.Domain.Services;
 using Talent.Services.Profile.Domain.Contracts;
 using Talent.Services.Profile.Domain.Services;
+using Microsoft.Extensions.FileProviders;
 
 namespace Talent.Services.Listing
 {
@@ -75,6 +76,17 @@ namespace Talent.Services.Listing
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<ITalentService, TalentService>();
             //services.AddScoped<IEmailService, EmailService>();
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "My Listing API",
+                    Version = "v1"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,6 +96,17 @@ namespace Talent.Services.Listing
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint
+            app.UseSwagger();
+                // Enable middleware to serve Swagger UI (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Listing API V1");
+                c.RoutePrefix = string.Empty;  // This makes Swagger UI available at the root (e.g., http://localhost:5000)
+            });
+            app.UseStaticFiles();  // Enable static file serving from wwwroot and other folders
+
             app.UseCors("AllowWebApp");
             app.UseMvc();
         }
