@@ -381,8 +381,9 @@ export default class AccountProfile extends React.Component {
                                             <VisaStatus
                                                 visaStatus={this.state.profileData.visaStatus}
                                                 visaExpiryDate={this.state.profileData.visaExpiryDate}
-                                                updateProfileData={this.updateWithoutSave}
+                                                updateProfileData={this.updateForComponentId}
                                                 saveProfileData={this.updateAndSaveData}
+                                                componentId='visaStatus'
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
@@ -390,8 +391,9 @@ export default class AccountProfile extends React.Component {
                                             tooltip='What is your current status in jobseeking?'
                                         >
                                             <TalentStatus
-                                                status={this.state.profileData.jobSeekingStatus}
-                                                updateProfileData={this.updateWithoutSave}
+                                                componentId="jobSeekingStatus"
+                                                talentStatus={this.state.profileData.jobSeekingStatus}
+                                                updateProfileData={this.updateForComponentId}
                                                 saveProfileData={this.updateAndSaveData}
                                             />
                                         </FormItemWrapper>
