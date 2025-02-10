@@ -59,6 +59,8 @@ export default class AccountProfile extends React.Component {
         this.loadData = this.loadData.bind(this)
         this.init = this.init.bind(this);
         this.validateInput = this.validateInput.bind(this);
+        this.deleteComponentValues = this.deleteComponentValues.bind(this);
+        this.sendDeleteRequest = this.sendDeleteRequest.bind(this);
     };
 
     init() {
@@ -108,6 +110,74 @@ export default class AccountProfile extends React.Component {
         data[componentId] = newValues;
         this.updateAndSaveData(data)
     }
+
+    /*Function will send delete request to profile server */
+    sendDeleteRequest(link, data, componentId) {
+        var cookies = Cookies.get('talentAuthToken');
+        $.ajax({
+            url: link,
+            headers: {
+                'Authorization': 'Bearer ' + cookies,
+                'Content-Type': 'application/json'
+            },
+            type: "POST",
+            data: JSON.stringify(data),
+            success: function (res) {
+                if (res.success == true) {
+                    //reload the components
+                    this.loadData();
+                    //resetting the error count in case we succeed after some errors
+                    if (this.state.errorCount > 0) {
+                        this.setState({
+                            errorCount: 0
+                        })
+                    }
+                    TalentUtil.notification.show(`${componentId} deleted successfully`, "success", null, null);
+                } else {
+                    TalentUtil.notification.show(`${componentId} did not delete successfully`, "error", null, null);
+                }
+
+            }.bind(this),
+            error: function (res, a, b)  {
+                //trying to re-fetch data in case of error to make UI and backend consistent
+                const count = this.state.errorCount;
+                if (count < 5) {
+                    this.loadData();
+                    this.setState({
+                        errorCount: count + 1
+                    })
+                }
+            }.bind(this)
+        })
+    }
+
+    /*Function to get the link and other details needed by sendDeleteRequest based on componentID*/
+    deleteComponentValues(componentId, data) {
+        switch (componentId) {
+            case "languages":
+                let link = `${profileApi}/profile/profile/deleteLanguage`;
+                this.sendDeleteRequest(link, data, componentId);
+                break;
+            case "skills":
+                link = `${profileApi}/profile/profile/deleteSkill`;
+                this.sendDeleteRequest(link, data, componentId);
+                break;
+            case "experience":
+                link = `${profileApi}/profile/profile/deleteExperience`;
+                this.sendDeleteRequest(link, data, componentId);
+                break;
+            case "education":
+                link = `${profileApi}/profile/profile/deleteEducation` ;
+                this.sendDeleteRequest(link, data, componentId);
+                break;
+            case "certifications":
+                link = `${profileApi}/profile/profile/deleteCertification`;
+                this.sendDeleteRequest(link, data, componentId);
+                break;
+            default:
+                break;
+        }
+
     }
 
     /*Currently added some minimal validation for input format*/

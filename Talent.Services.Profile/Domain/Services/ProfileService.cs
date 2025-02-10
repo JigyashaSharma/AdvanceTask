@@ -302,6 +302,8 @@ namespace Talent.Services.Profile.Domain.Services
                 existingUser.CvName = model.CvName;
                 existingUser.LinkedAccounts = model.LinkedAccounts;
                 existingUser.JobSeekingStatus = model.JobSeekingStatus;
+                existingUser.Summary = model.Summary;
+                existingUser.Description = model.Description;
 
                 existingUser.VideoName = model.VideoName;
 
@@ -349,8 +351,149 @@ namespace Talent.Services.Profile.Domain.Services
             }
         }
 
+        public async Task<bool> DeleteLanguage(AddLanguageViewModel deleteLanguage, string updaterId)
+        {
+            try
+            {
+                User existingUser = await _userRepository.GetByIdAsync(updaterId);
+                if (existingUser == null)
+                {
+                    throw new Exception();
+                }
+
+                foreach (var language in existingUser.Languages)
+                {
+                    if (language.Id == deleteLanguage.Id)
+                    {
+                        language.IsDeleted = true;
+                        break;
+                    }
+                }
+
+                await _userRepository.Update(existingUser);
+                return true;
+
+            } catch (MongoException e)
+            {
+                return false;
+            }
         }
 
+        public async Task<bool> DeleteSkill(AddSkillViewModel deleteSkill, string updaterId)
+        {
+            try
+            {
+                User existingUser = await _userRepository.GetByIdAsync(updaterId);
+                if (existingUser == null)
+                {
+                    throw new Exception();
+                }
+
+                foreach (var skill in existingUser.Skills)
+                {
+                    if (skill.Id == deleteSkill.Id)
+                    {
+                        skill.IsDeleted = true;
+                        break;
+                    }
+                }
+
+                await _userRepository.Update(existingUser);
+                return true;
+
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteExperience(ExperienceViewModel deleteExperience, string updaterId)
+        {
+            try
+            {
+                User existingUser = await _userRepository.GetByIdAsync(updaterId);
+                if (existingUser == null)
+                {
+                    throw new Exception();
+                }
+
+                foreach (var experience in existingUser.Experience)
+                {
+                    if (experience.Id == deleteExperience.Id)
+                    {
+                        experience.IsDeleted = true;
+                        break;
+                    }
+                }
+
+                await _userRepository.Update(existingUser);
+                return true;
+
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteEducation(AddEducationViewModel deleteEducation, string updaterId)
+        {
+            try
+            {
+                User existingUser = await _userRepository.GetByIdAsync(updaterId);
+                if (existingUser == null)
+                {
+                    throw new Exception();
+                }
+
+                foreach (var education in existingUser.Education)
+                {
+                    if (education.Id == deleteEducation.Id)
+                    {
+                        education.IsDeleted = true;
+                        break;
+                    }
+                }
+
+                await _userRepository.Update(existingUser);
+
+                return true;
+
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
+        }
+        public async Task<bool> DeleteCertificate(AddCertificationViewModel deleteCertificate, string updaterId)
+        {
+            try
+            {
+                User existingUser = await _userRepository.GetByIdAsync(updaterId);
+                if (existingUser == null)
+                {
+                    throw new Exception();
+                }
+
+                foreach (var certificate in existingUser.Certifications)
+                {
+                    if (certificate.Id == deleteCertificate.Id)
+                    {
+                        certificate.IsDeleted = true;
+                        break;
+                    }
+                }
+
+                await _userRepository.Update(existingUser);
+                return true;
+
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
+        }
         public async Task<EmployerProfileViewModel> GetEmployerProfile(string Id, string role)
         {
 
