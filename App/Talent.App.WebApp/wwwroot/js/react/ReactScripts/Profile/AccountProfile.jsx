@@ -319,7 +319,10 @@ export default class AccountProfile extends React.Component {
                                         >
                                             <Language
                                                 languageData={this.state.profileData.languages}
-                                                updateProfileData={this.updateAndSaveData}
+                                                componentId="languages"
+                                                updateProfileData={this.updateForComponentId}
+                                                deleteComponentValues={this.deleteComponentValues}
+                                                validateFunc={this.validateInput}
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
@@ -328,7 +331,10 @@ export default class AccountProfile extends React.Component {
                                         >
                                             <Skill
                                                 skillData={this.state.profileData.skills}
-                                                updateProfileData={this.updateAndSaveData}
+                                                updateProfileData={this.updateForComponentId}
+                                                componentId="skills"
+                                                deleteComponentValues={this.deleteComponentValues}
+                                                validateFunc={this.validateInput}
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
@@ -337,7 +343,11 @@ export default class AccountProfile extends React.Component {
                                         >
                                             <Experience
                                                 experienceData={this.state.profileData.experience}
-                                                updateProfileData={this.updateAndSaveData}
+                                                updateProfileData={this.updateForComponentId}
+                                                componentId="experience"
+                                                deleteComponentValues={this.deleteComponentValues}
+                                                validateFunc={this.validateInput}
+
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
@@ -346,7 +356,10 @@ export default class AccountProfile extends React.Component {
                                         >
                                             <Education
                                                 educationData={this.state.profileData.education}
-                                                updateProfileData={this.updateAndSaveData}
+                                                updateProfileData={this.updateForComponentId}
+                                                componentId="education"
+                                                deleteComponentValues={this.deleteComponentValues}
+                                                validateFunc={this.validateInput}
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
@@ -355,7 +368,10 @@ export default class AccountProfile extends React.Component {
                                         >
                                             <Certificate
                                                 certificateData={this.state.profileData.certifications}
-                                                updateProfileData={this.updateAndSaveData}
+                                                updateProfileData={this.updateForComponentId}
+                                                componentId="certifications"
+                                                deleteComponentValues={this.deleteComponentValues}
+                                                validateFunc={this.validateInput}
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
