@@ -457,7 +457,7 @@ export default class AccountProfile extends React.Component {
                                             <VideoUpload
                                                 videoName={this.state.profileData.videoName}
                                                 updateProfileData={this.updateWithoutSave}
-                                                saveVideoUrl={'http://localhost:60290/profile/profile/updateTalentVideo'}
+                                                saveVideoUrl={`${profileApi}/profile/profile/updateTalentVideo`}
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
@@ -469,7 +469,7 @@ export default class AccountProfile extends React.Component {
                                                 cvName={this.state.profileData.cvName}
                                                 cvUrl={this.state.profileData.cvUrl}
                                                 updateProfileData={this.updateWithoutSave}
-                                                saveCVUrl={'http://localhost:60290/profile/profile/updateTalentCV'}
+                                                saveCVUrl={`${profileApi}/profile/profile/updateTalentCV`}
                                             />
                                         </FormItemWrapper>
                                     </div>
