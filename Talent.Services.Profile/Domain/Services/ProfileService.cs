@@ -614,6 +614,44 @@ namespace Talent.Services.Profile.Domain.Services
             }
         }
 
+        public async Task<bool> UpdateTalentPhoto(string userId, IFormFile file)
+        {
+            var fileExtension = Path.GetExtension(file.FileName);
+            List<string> acceptedExtensions = new List<string> { ".jpg", ".png", ".gif", ".jpeg" };
+
+            if (fileExtension != null && !acceptedExtensions.Contains(fileExtension))
+            {
+                return false;
+            }
+
+            var existingUser = (await _userRepository.Get(x => x.Id == userId)).FirstOrDefault();
+
+            if(existingUser == null)
+            {
+                return false;
+            }
+
+            var newFileName = await _fileService.SaveFile(file, FileType.ProfilePhoto);
+
+            if (!string.IsNullOrWhiteSpace(newFileName))
+            {
+                var oldFileName = existingUser.ProfilePhoto;
+
+                if (!string.IsNullOrWhiteSpace(oldFileName))
+                {
+                    await _fileService.DeleteFile(oldFileName, FileType.ProfilePhoto);
+                }
+
+                existingUser.ProfilePhoto = newFileName;
+                //existingUser.ProfilePhotoUrl =  _fileService.GetFileURLLocal(newFileName, FileType.ProfilePhoto);
+                existingUser.ProfilePhotoUrl = await _fileService.GetFileURL(newFileName, FileType.ProfilePhoto);
+
+                await _userRepository.Update(existingUser);
+                return true;
+            }
+
+            return false;
+        }
         public async Task<bool> UpdateEmployerPhoto(string employerId, IFormFile file)
         {
             var fileExtension = Path.GetExtension(file.FileName);
@@ -654,12 +692,6 @@ namespace Talent.Services.Profile.Domain.Services
         }
 
         public async Task<bool> AddEmployerVideo(string employerId, IFormFile file)
-        {
-            //Your code here;
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> UpdateTalentPhoto(string talentId, IFormFile file)
         {
             //Your code here;
             throw new NotImplementedException();

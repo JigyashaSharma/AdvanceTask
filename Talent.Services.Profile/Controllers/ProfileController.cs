@@ -171,6 +171,7 @@ namespace Talent.Services.Profile.Controllers
             }
             return Json(new { Success = false });
         }
+    
 
         [HttpGet("getSkill")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
@@ -261,8 +262,16 @@ namespace Talent.Services.Profile.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
         public async Task<ActionResult> UpdateProfilePhoto()
         {
-            //Your code here;
-            throw new NotImplementedException();
+            IFormFile file = Request.Form.Files[0];
+
+            if (ModelState.IsValid)
+            {
+                if (await _profileService.UpdateTalentPhoto(_userAppContext.CurrentUserId, file))
+                {
+                    return Json(new { Success = true });
+                }
+            }
+            return Json(new { Success = false });
         }
 
         [HttpPost("updateTalentCV")]
@@ -444,6 +453,7 @@ namespace Talent.Services.Profile.Controllers
         }
         
         #endregion
+
 
         #region TalentFeed
 

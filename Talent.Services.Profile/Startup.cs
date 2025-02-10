@@ -80,6 +80,7 @@ namespace Talent.Services.Profile
             });
             services.AddScoped<IUserAppContext, UserAppContext>();
             services.AddScoped<IProfileService, ProfileService>();
+            services.AddScoped<IAwsService, AwsService>();
             services.AddScoped<IFileService, FileService>();
 
             services.Configure<AwsOptions>(Configuration.GetSection("aws"));

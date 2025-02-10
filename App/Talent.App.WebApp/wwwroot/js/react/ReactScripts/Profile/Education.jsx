@@ -138,7 +138,7 @@ export default class Education extends React.Component {
     }
     updateEditedEducation() {
 
-        if (!this.props.validateFunc(this.state.newEducation)) {
+        if (!this.props.validateFunc(this.state.editEducation)) {
             return;
         }
 

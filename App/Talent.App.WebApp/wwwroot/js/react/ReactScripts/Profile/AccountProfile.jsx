@@ -18,6 +18,7 @@ import { BodyWrapper, loaderData } from '../Layout/BodyWrapper.jsx';
 import { LoggedInNavigation } from '../Layout/LoggedInNavigation.jsx';
 import TalentStatus from './TalentStatus.jsx';
 import { fieldValidationRules } from './ValidationRules.jsx';
+import Loading from '../Layout/Loading.jsx';
 
 export default class AccountProfile extends React.Component {
     constructor(props) {
@@ -49,7 +50,8 @@ export default class AccountProfile extends React.Component {
                 }
             },
             loaderData: loaderData,
-            errorCount: 0
+            errorCount: 0,
+            hasError: false,
         }
 
         this.updateWithoutSave = this.updateWithoutSave.bind(this)
@@ -63,15 +65,20 @@ export default class AccountProfile extends React.Component {
         this.sendDeleteRequest = this.sendDeleteRequest.bind(this);
     };
 
+    static getDerivedStateFromError(error) {
+        return {hasError: true}
+    }
     init() {
         let loaderData = this.state.loaderData;
         loaderData.allowedUsers.push("Talent");
-        loaderData.isLoading = false;
-        this.setState({ loaderData, })
+        loaderData.isLoading = true;
+        this.setState({ loaderData, });
+
+        this.loadData();
     }
 
     componentDidMount() {
-        this.loadData();
+        this.init();
     }
 
     loadData() {
@@ -85,9 +92,30 @@ export default class AccountProfile extends React.Component {
             type: "GET",
             success: function (res) {
                 this.updateWithoutSave(res.data)
+
+                let updatedLoaderData = this.state.loaderData;
+                updatedLoaderData.isLoading = false;
+                this.setState({
+                    loaderData: updatedLoaderData
+                });
+
+                if (this.state.hasError === true) {
+                    this.setState({
+                        hasError: false
+                    });
+                }
+            }.bind(this),
+            error: function (xhr, status, error) {
+
+                // Update state to hide the loader even on error
+                let updatedLoaderData = this.state.loaderData;
+                updatedLoaderData.isLoading = false;
+                this.setState({
+                    loaderData: updatedLoaderData,
+                    hasError: true
+                });
             }.bind(this)
         })
-        this.init()
     }
     //updates component's state without saving data
     updateWithoutSave(newValues) {
@@ -129,7 +157,8 @@ export default class AccountProfile extends React.Component {
                     //resetting the error count in case we succeed after some errors
                     if (this.state.errorCount > 0) {
                         this.setState({
-                            errorCount: 0
+                            errorCount: 0,
+                            hasError: false
                         })
                     }
                     TalentUtil.notification.show(`${componentId} deleted successfully`, "success", null, null);
@@ -144,7 +173,8 @@ export default class AccountProfile extends React.Component {
                 if (count < 5) {
                     this.loadData();
                     this.setState({
-                        errorCount: count + 1
+                        errorCount: count + 1,
+                        hasError: true
                     })
                 }
             }.bind(this)
@@ -246,6 +276,15 @@ export default class AccountProfile extends React.Component {
     }
 
     render() {
+        // Render fallback UI if an error has been caught
+        if (this.state && this.state.hasError) {
+            return <h1>Something went wrong. Please try again later.</h1>;
+        }
+        if (this.state.loaderData.isLoading) {
+            return <Loading />;
+        }
+
+
         const profile = {
             firstName: this.state.profileData.firstName,
             lastName: this.state.profileData.lastName,
@@ -405,7 +444,9 @@ export default class AccountProfile extends React.Component {
                                             <PhotoUpload
                                                 imageId={this.state.profileData.profilePhotoUrl}
                                                 updateProfileData={this.updateWithoutSave}
-                                                savePhotoUrl='http://localhost:60290/profile/profile/updateProfilePhoto'
+                                                loadData={this.loadData}
+                                                componentId="ProfilePhotoUrl"
+                                                savePhotoUrl={`${profileApi}/profile/profile/updateProfilePhoto`}
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
@@ -431,12 +472,6 @@ export default class AccountProfile extends React.Component {
                                                 saveCVUrl={'http://localhost:60290/profile/profile/updateTalentCV'}
                                             />
                                         </FormItemWrapper>
-                                        <SelfIntroduction
-                                            summary={this.state.profileData.summary}
-                                            description={this.state.profileData.description}
-                                            updateProfileData={this.updateAndSaveData}
-                                            updateWithoutSave={this.updateWithoutSave}
-                                        />
                                     </div>
                                 </form>
                             </div >
