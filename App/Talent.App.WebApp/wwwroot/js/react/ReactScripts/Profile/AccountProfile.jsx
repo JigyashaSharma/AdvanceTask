@@ -117,7 +117,15 @@ export default class AccountProfile extends React.Component {
         for (let fieldName of Object.keys(fields)) {
             const fieldRule = fieldValidationRules.find(rule => rule.field === fieldName);
 
-            if (fieldRule && fields[fieldName]) {
+            //check if fields are not null
+            
+            if (!fields[fieldName] && fieldName !== 'id') {
+                const errorMsg = fieldRule ? fieldRule.errorMessage : `Provide valid value for ${fieldName}`;
+                TalentUtil.notification.show(errorMsg, "error", null, null);
+                return false;
+            } 
+            //Minimal check for the validity of the field
+            if (fieldRule) {
                 const valid = fieldRule.regex.test(fields[fieldName]);
                 if (!valid) {
                     TalentUtil.notification.show(fieldRule.errorMessage, "error", null, null);
@@ -163,7 +171,7 @@ export default class AccountProfile extends React.Component {
                         errorCount: count + 1
                     })
                 }
-            }
+            }.bind(this)
         })
     }
 
@@ -195,13 +203,24 @@ export default class AccountProfile extends React.Component {
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
+                                            title='Description'
+                                            tooltip='Provide self introduction.'
+                                        >
+                                            <SelfIntroduction
+                                                summary={this.state.profileData.summary}
+                                                description={this.state.profileData.description}
+                                                updateProfileData={this.updateAndSaveData}
+                                                updateWithoutSave={this.updateWithoutSave}
+                                            />
+                                        </FormItemWrapper>
+                                        <FormItemWrapper
                                             title='User Details'
                                             tooltip='Enter your contact details'
                                         >
                                             <IndividualDetailSection
-                                                controlFunc={this.updateForComponentId}
+                                                controlFunc={this.updateAndSaveData}
                                                 details={profile}
-                                                componentId='contactDetails'
+                                                validateFunc={this.validateInput}
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
@@ -209,8 +228,10 @@ export default class AccountProfile extends React.Component {
                                             tooltip='Enter your current address'>
                                             <Address
                                                 addressData={this.state.profileData.address}
+                                                componentId="address"
                                                 updateProfileData={this.updateWithoutSave}
-                                                saveProfileData={this.updateAndSaveData}
+                                                saveProfileData={this.updateForComponentId}
+                                                validateFunc={this.validateInput}
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper

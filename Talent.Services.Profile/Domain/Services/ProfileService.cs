@@ -609,6 +609,34 @@ namespace Talent.Services.Profile.Domain.Services
             original.Skill = model.Name;
         }
 
+        protected void UpdateLanguageFromView(AddLanguageViewModel model, UserLanguage original)
+        {
+            original.Language = model.Name;
+            original.LanguageLevel = model.Level;
+        }
+        protected void UpdateCertificateFromView(AddCertificationViewModel model, UserCertification original)
+        {
+            original.CertificationName = model.CertificationName;
+            original.CertificationFrom = model.CertificationFrom;
+            original.CertificationYear = model.CertificationYear;
+        }
+        protected void UpdateEducationFromView(AddEducationViewModel model, UserEducation original)
+        {
+            original.InstituteName = model.InstituteName;
+            original.Country = model.Country;
+            original.Title = model.Title;
+            original.Degree = model.Degree;
+            original.YearOfGraduation = model.YearOfGraduation;
+        }
+        protected void UpdateExperienceFromView(ExperienceViewModel model, UserExperience original)
+        {
+            original.Company = model.Company;
+            original.Position = model.Position;
+            original.Responsibilities = model.Responsibilities;
+            original.Start = model.Start;
+            original.End = model.End;
+        }
+
         #endregion
 
         #region Build Views from Model

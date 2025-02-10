@@ -2,7 +2,7 @@
 import Cookies from 'js-cookie';
 import { ChildSingleInput } from '../Form/SingleInput.jsx';
 import { Location } from '../Employer/CreateJob/Location.jsx';
-export class IndividualDetailSection extends Component {
+export class IndividualDetailSection extends React.PureComponent {
     constructor(props) {
         super(props)
 
@@ -51,10 +51,12 @@ export class IndividualDetailSection extends Component {
     }
 
     saveContact() {
-        console.log(this.props.componentId)
-        console.log(this.state.newContact)
+        const valid = this.props.validateFunc(this.state.newContact);
+        if (!valid) {
+            return;
+        }
         const data = Object.assign({}, this.state.newContact)
-        this.props.controlFunc(this.props.componentId, data)
+        this.props.controlFunc(data)
         this.closeEdit()
     }
 
@@ -129,7 +131,7 @@ export class IndividualDetailSection extends Component {
                         <p>Email: {email}</p>
                         <p>Phone: {phone}</p>
                     </React.Fragment>
-                    <button type="button" className="ui right floated teal button" onClick={this.openEdit}>Edit</button>
+                    <button type="button" className="ui right floated black button" onClick={this.openEdit}>Edit</button>
                 </div>
             </div>
         )
