@@ -4,6 +4,7 @@ import { default as Countries } from '../../../../util/jsonFiles/countries.json'
 import { ChildSingleInput } from '../Form/SingleInput.jsx';
 import styles from '../../../../css/TalentTheme.module.css';
 
+const requiredKeysAddress = ["number", "street", "suburb", "country", "city", "postCode"];
 export class Address extends React.Component {
     constructor(props) {
         super(props)
@@ -58,7 +59,7 @@ export class Address extends React.Component {
         })
     }
     saveAddress() {
-        if (!this.props.validateFunc(this.state.currentAddress)) {
+        if (!this.props.validateFunc(this.state.currentAddress, requiredKeysAddress)) {
             return;
         }
         let data = Object.assign({}, this.state.currentAddress);

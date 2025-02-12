@@ -9,16 +9,46 @@ export default class EditItem extends React.Component {
         this.renderInputField = this.renderInputField.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleDateChange = this.handleDateChange.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
     }
 
     handleChange(event) {
-        this.props.handleChange(event.target.name, event.target.value);
+        const data = Object.assign({}, this.props.value);
+        data[event.target.name] = event.target.value;
+        this.props.setEditState(data);
     }
 
     handleDateChange(date, name) {
-        this.props.handleDateChange(date, name);
+        const data = Object.assign({}, this.props.value);
+        data[name] = date;
+        this.props.setEditState(data);
     }
 
+    handleUpdate() {
+        //Can change the 'keys' array if any field it not required
+        const keys = this.props.header.map(item => item.name);
+        if (!this.props.validateFunc(this.props.value, keys)) {
+            return;
+        }
+
+        const data = [...this.props.fullData];
+        const editKeys = this.props.header.map(item => item.name);
+        for (let item of data) {
+            if (item.id === this.props.value.id) {
+                //update the item in the actual object
+                editKeys.forEach(key => {
+                    if (item.hasOwnProperty(key)){
+                        item[key] = this.props.value[key];
+                    }
+                });
+                this.props.updateProfileData(this.props.componentId, data);
+                break;
+            }
+        }
+
+        this.props.setEditState({});
+        this.props.handleCancel();
+    }
     renderInputField(item) {
         const { name, type, label, placeholder, options, columnWidth } = item;
         const value = this.props.value; //value of the items that is being edited
@@ -42,11 +72,11 @@ export default class EditItem extends React.Component {
                 const selectedDate = value[name] && moment(value[name]).isValid() ? moment(value[name]).toDate() : moment().toDate();
 
                 return (
-                    <div key={name} className={`ui ${columnWidth} ${styles.topMargin} ${styles.bottomMargin} wide column field`}> {/* Each input takes 4 out of 16 columns */}
+                    <div key={name} className={`ui ${columnWidth} ${styles.topMargin} ${styles.bottomMargin} wide column field`}> 
                         {label && <label htmlFor={name}>{label}</label>}
                         <DatePicker
                             selected={selectedDate}
-                            onChange={(date) => this.handleDateChange(date, name)} // Handle date change
+                            onChange={(date) => this.handleDateChange(date, name)}
                             placeholderText={placeholder || "Select a date"}
                             className="form-control"
                             dateFormat="dd/MM/yyyy" // Customize date format
@@ -104,7 +134,7 @@ export default class EditItem extends React.Component {
                     <div className={`ui row margined `}>
                     {/*Iterate over the header that contains the details of Item that needs to be edits. Display them*/}
                         {header && header.map((item) => this.renderInputField(item))}
-                        <button type="button" className={`ui black button  ${styles.topMargin} ${styles.bottomMargin} ${styles.leftMargin}`} onClick={this.props.updateItem}>Update</button>
+                        <button type="button" className={`ui black button  ${styles.topMargin} ${styles.bottomMargin} ${styles.leftMargin}`} onClick={this.handleUpdate}>Update</button>
                         <button type="button" className={`ui grey button  ${styles.topMargin} ${styles.bottomMargin}`} onClick={this.props.handleCancel}>Cancel</button>
                     </div>
                 </div>

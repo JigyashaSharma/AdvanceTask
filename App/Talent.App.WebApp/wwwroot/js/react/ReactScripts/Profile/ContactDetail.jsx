@@ -2,6 +2,8 @@
 import Cookies from 'js-cookie';
 import { ChildSingleInput } from '../Form/SingleInput.jsx';
 import { Location } from '../Employer/CreateJob/Location.jsx';
+
+const requiredKeysIndividual = ['firstName', 'lastName', 'email', 'phone'];
 export class IndividualDetailSection extends React.PureComponent {
     constructor(props) {
         super(props)
@@ -51,7 +53,7 @@ export class IndividualDetailSection extends React.PureComponent {
     }
 
     saveContact() {
-        const valid = this.props.validateFunc(this.state.newContact);
+        const valid = this.props.validateFunc(this.state.newContact, requiredKeysIndividual);
         if (!valid) {
             return;
         }

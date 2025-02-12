@@ -56,7 +56,8 @@ export default class SocialMediaLinkedAccount extends React.PureComponent {
     }
 
     saveLinkedAccounts() {
-        if (!this.props.validateFunc(this.state.newlinkedAccounts)) {
+        //do not want linkedIn and Github URl to be necessary
+        if (!this.props.validateFunc(this.state.newlinkedAccounts, [])) {
             return;
         }
         let data = Object.assign({}, this.state.newlinkedAccounts)

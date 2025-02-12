@@ -18,72 +18,26 @@ export default class Skill extends React.Component {
         super(props);
         this.state = {
             showAddSection: false,
-            skillData: this.props.skillData,
             showCloseConfirm: false,
             showEditConfirm: false,
-            newSkill: {
-                id: null,
-                name: '',
-                level: '',
-            },
-            deleteSkill: {
-                id: null,
-                name: '',
-                level: '',
-            },
-            editSkill: {
-                id: null,
-                name: '',
-                level: '',
-            }
+            newSkill: {},
+            deleteSkill: {},
+            editSkill: {}
         }
-        this.addSkill = this.addSkill.bind(this);
+        
+        this.setNewSkill = this.setNewSkill.bind(this);
         this.showAddNewSection = this.showAddNewSection.bind(this);
         this.closeAddnewSection = this.closeAddnewSection.bind(this);
-        this.handleNewSkillFields = this.handleNewSkillFields.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.closeConfirmDone = this.closeConfirmDone.bind(this);
+
         this.handleEdit = this.handleEdit.bind(this);
-        this.handleEditSkillFields = this.handleEditSkillFields.bind(this);
-        this.updateEditedSkill = this.updateEditedSkill.bind(this);
+        this.setEditSkill = this.setEditSkill.bind(this);
         this.closeEditSection = this.closeEditSection.bind(this);
     };
 
-    componentDidUpdate(prevProps) {
-        if (prevProps.skillData !== this.props.skillData) {
-            this.setState({
-                skillData: this.props.skillData
-            })
-        }
-    }
-
-    /*validateInput(skill) {
-        //validate language is not null
-        if (!skill.name || !skill.level) {
-            TalentUtil.notification.show("Please provide valid values for skill!", "success", null, null);
-            return false;
-        }
-
-        return true;
-    }*/
-
     /*Add Related section start */
-    addSkill() {
-        if (!this.props.validateFunc(this.state.newSkill)) {
-            return;
-        }
-        const data = [...this.state.skillData, this.state.newSkill]
-        this.setState(prevState => ({
-            skillData: [...prevState.skillData, prevState.newSkill],
-            newSkill: { id: null, name: "", level: "" }
-        }));
-
-        this.props.updateProfileData(this.props.componentId, data);
-    }
-
-    handleNewSkillFields(name, value) {
-        const data = Object.assign({}, this.state.newSkill);
-        data[name] = value;
+    setNewSkill(data) {
         this.setState({
             newSkill: data
         })
@@ -96,68 +50,38 @@ export default class Skill extends React.Component {
     }
     closeAddnewSection() {
         this.setState({
-            showAddSection: false
+            showAddSection: false,
+            newSkill: {}
         })
     }
     /*Add Related section end */
 
     /*Edit Related section start */
     handleEdit(id) {
-        const data = this.state.skillData.find(item => item.id === id);
+        const data = this.props.skillData.find(item => item.id === id);
         this.setState({
             showEditConfirm: true,
             editSkill: data
         });
     }
-    handleEditSkillFields(name, value) {
-        const data = Object.assign({}, this.state.editSkill);
-        data[name] = value;
-
+    
+    setEditSkill(data) {
         this.setState({
             editSkill: data
-        });
-    }
-
-    updateEditedSkill() {
-        if (!this.props.validateFunc(this.state.editSkill)) {
-            return;
-        }
-        const data = [...this.state.skillData];
-        for (let skill of data) {
-            if (skill.id === this.state.editSkill.id) {
-                skill.name = this.state.editSkill.name;
-                skill.level = this.state.editSkill.level;
-                this.props.updateProfileData(this.props.componentId, data);
-                break;
-            }
-        }
-
-        this.setState({
-            skillData: data,
-            editSkill: {
-                id: null,
-                name: '',
-                level: '',
-            }
         })
-        this.closeEditSection();
     }
 
     closeEditSection() {
         this.setState({
             showEditConfirm: false,
-            editSkill: {
-                id: null,
-                name: '',
-                level: '',
-            }
+            editSkill: {}
         })
     }
     /*Edit Related section end */
 
     /*Delete Related section start */
     handleDelete(id) {
-        const data = this.state.skillData.find(item => item.id === id);
+        const data = this.props.skillData.find(item => item.id === id);
         this.setState({
             showCloseConfirm: true,
             deleteSkill: data
@@ -167,11 +91,7 @@ export default class Skill extends React.Component {
     closeConfirmDone() {
         this.setState({
             showCloseConfirm: false,
-            deleteSkill: {
-                id: null,
-                name: '',
-                level: ''
-            }
+            deleteSkill: {}
         })
     }
     /*Delete Related section end */
@@ -181,23 +101,28 @@ export default class Skill extends React.Component {
            <div className="row margined">
                {this.state.showAddSection && < AddItem
                    header={AddItemHeader}
+                   componentId={this.props.componentId}
                    handleCancel={this.closeAddnewSection}
-                   handleChange={this.handleNewSkillFields}
-                   handleAdd={this.addSkill}
+                   setNewState={this.setNewSkill}
+                   updateProfileData={this.props.updateProfileData}
+                   validateFunc={this.props.validateFunc}
+                   fullData={this.props.skillData}
                    value={this.state.newSkill}
                />}
            <DisplayItem
                rowHeader={RowHeader}
-               data={this.props.skillData}
-               component="Skill"
+               displayData={this.props.skillData}
+               componentId={this.props.componentId}
                showAddItem={this.showAddNewSection}
                handleDelete={this.handleDelete }
                handleEdit={this.handleEdit}
                showEditConfirm={this.state.showEditConfirm}
                editItem={this.state.editSkill}
                editHeader={AddItemHeader}
-               handleEditFieldsChange={this.handleEditSkillFields}
-               updateEditedItem={this.updateEditedSkill}
+               setEditState={this.setEditSkill}
+               validateFunc={this.props.validateFunc}
+               updateProfileData={this.props.updateProfileData}
+               fullData={this.props.skillData}
                closeEditSection={this.closeEditSection}
                />
                <CloseConfirmation

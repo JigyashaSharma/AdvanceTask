@@ -6,19 +6,35 @@ export default class AddItem extends React.Component {
     constructor(props) {
         super(props);
 
+        this.handleAdd = this.handleAdd.bind(this);
         this.renderInputField = this.renderInputField.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleDateChange = this.handleDateChange.bind(this);
     }
 
     handleChange(event) {
-        this.props.handleChange(event.target.name, event.target.value);
+        const data = Object.assign({}, this.props.value);
+        data[event.target.name] = event.target.value;
+        this.props.setNewState(data);
     }
 
     handleDateChange(date, name) {
-        this.props.handleDateChange(date, name);
+        const data = Object.assign({}, this.props.value);
+        data[name] = date;
+        this.props.setNewState(data);
     }
 
+    handleAdd() {
+        const keys = this.props.header.map(item => item.name);
+        if (!this.props.validateFunc(this.props.value, keys)) {
+            return;
+        }
+        const data = [...this.props.fullData, this.props.value];
+
+        const newState = {}; //set it empty for cleanup
+        this.props.updateProfileData(this.props.componentId, data);
+        this.props.setNewState(newState);
+    }
     renderInputField(item) {
         const { name, type, label, placeholder, options,columnWidth } = item;
         const value = this.props.value;
@@ -103,7 +119,7 @@ export default class AddItem extends React.Component {
                 <div className="ui grid">
                     <div className={`ui row margined `}>
                         {header.map((item) => this.renderInputField(item))}
-                        <button type="button" className={`ui black button  ${styles.topMargin} ${styles.bottomMargin} ${styles.leftMargin}`} onClick={this.props.handleAdd}>Add</button>
+                        <button type="button" className={`ui black button  ${styles.topMargin} ${styles.bottomMargin} ${styles.leftMargin}`} onClick={this.handleAdd}>Add</button>
                         <button type="button" className={`ui grey button  ${styles.topMargin} ${styles.bottomMargin}`} onClick={this.props.handleCancel}>Cancel</button>
                     </div>
                 </div>

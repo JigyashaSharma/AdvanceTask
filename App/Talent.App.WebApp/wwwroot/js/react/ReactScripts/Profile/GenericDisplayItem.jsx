@@ -43,7 +43,6 @@ export default class DisplayItem extends React.Component {
 
     handleDelete(id) {
         this.props.handleDelete(id);
-        // Implement your delete logic here
     };
 
     displayData(item, header) {
@@ -88,8 +87,8 @@ export default class DisplayItem extends React.Component {
         const header = this.props.rowHeader;
 
         let data = null;
-        if (this.ValidateData(this.props.data)) {
-            data = this.props.data;
+        if (this.ValidateData(this.props.displayData)) {
+            data = this.props.displayData;
         }
 
         return (
@@ -123,10 +122,12 @@ export default class DisplayItem extends React.Component {
                                 <td colSpan={Object.keys(header).length + 1}>
                                 <EditItem
                                     header={this.props.editHeader}
+                                    componentId={this.props.componentId}
                                     value={this.props.editItem}
-                                    handleChange={this.props.handleEditFieldsChange}
-                                    handleDateChange={this.props.handleDateChange}
-                                    updateItem={this.props.updateEditedItem}
+                                    fullData={this.props.fullData}
+                                    setEditState={this.props.setEditState}
+                                    updateProfileData={this.props.updateProfileData}
+                                    validateFunc={this.props.validateFunc}
                                     handleCancel={this.props.closeEditSection}
                                     />
                                 </td>

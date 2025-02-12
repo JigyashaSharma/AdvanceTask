@@ -21,67 +21,30 @@ export default class Language extends React.Component {
             showAddSection: false,
             showCloseConfirm: false,
             showEditConfirm: false,
-            languageData: this.props.languageData,
-            newLanguage: {
-                id: null,
-                name: '',
-                level:'',
-            },
-            deleteLanguage: {
-                id: null,
-                name: '',
-                level: '',
-            },
-            editLanguage: {
-                id: null,
-                name: '',
-                level: '',
-            }
+            newLanguage: {},
+            deleteLanguage: {},
+            editLanguage: {}
+
         }
-        this.addLanguage = this.addLanguage.bind(this);
+        
+        this.setNewLanguage = this.setNewLanguage.bind(this);
         this.showAddNewSection = this.showAddNewSection.bind(this);
         this.closeAddnewSection = this.closeAddnewSection.bind(this);
-        this.handleNewLanguageFields = this.handleNewLanguageFields.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.closeConfirmDone = this.closeConfirmDone.bind(this);
+
         this.handleEdit = this.handleEdit.bind(this);
-        this.handleEditLanguageFields = this.handleEditLanguageFields.bind(this);
-        this.updateEditedLanguage = this.updateEditedLanguage.bind(this);
+        this.setEditLanguage = this.setEditLanguage.bind(this);
         this.closeEditSection = this.closeEditSection.bind(this);
     }
 
-    componentDidUpdate(prevProps) {
-        if (prevProps.languageData !== this.props.languageData) {
-            this.setState({
-                languageData: this.props.languageData
-            })
-        }
-    }
-
     /*Add Related section start */
-    addLanguage() {
-        if (!this.props.validateFunc(this.state.newLanguage)) {
-            return;
-        }
-        const data = [...this.state.languageData, this.state.newLanguage];
-        
-        this.setState(prevState => ({
-            languageData: [...prevState.languageData, prevState.newLanguage],
-            newLanguage: { name: "", level: "" }
-        }));
-
-        
-        this.props.updateProfileData(this.props.componentId, data);
-    }
-
-    handleNewLanguageFields(name, value) {
-        const data = Object.assign({}, this.state.newLanguage);
-        data[name] = value;
+    setNewLanguage(data) {
         this.setState({
+
             newLanguage: data
         })
     }
-
     showAddNewSection() {
         this.setState({
             showAddSection: true
@@ -89,7 +52,8 @@ export default class Language extends React.Component {
     }
     closeAddnewSection() {
         this.setState({
-            showAddSection: false
+            showAddSection: false,
+            newLanguage: {}
         })
     }
 
@@ -98,56 +62,30 @@ export default class Language extends React.Component {
     /*Edit Related section start */
 
     handleEdit(id) {
-        const data = this.state.languageData.find(item => item.id === id);
+        const data = this.props.languageData.find(item => item.id === id);
         this.setState({
             showEditConfirm: true,
             editLanguage: data
         });
     }
-    handleEditLanguageFields(name, value) {
-        const data = Object.assign({}, this.state.editLanguage);
-        data[name] = value;
 
+    setEditLanguage(data) {
         this.setState({
             editLanguage: data
-        });
-    }
-
-    updateEditedLanguage() {
-        if (!this.props.validateFunc(this.state.editLanguage)) {
-            return;
-        }
-        const data = [...this.state.languageData];
-        for (let language of data) {
-            if (language.id === this.state.editLanguage.id) {
-                language.name = this.state.editLanguage.name;
-                language.level = this.state.editLanguage.level;
-                this.props.updateProfileData(this.props.componentId, data);
-                break;
-            }
-        }
-
-        this.setState({
-            languageData: data
         })
-        this.closeEditSection();
     }
 
     closeEditSection() {
         this.setState({
             showEditConfirm: false,
-            editLanguage : {
-                id: null,
-                name: '',
-                level: '',
-            }
+            editLanguage : {}
         })
     }
     /*Edit Related section end */
 
     /*Delete Related section start */
     handleDelete(id) {
-        const data = this.state.languageData.find(item => item.id === id);
+        const data = this.props.languageData.find(item => item.id === id);
         this.setState({
             showCloseConfirm: true,
             deleteLanguage: data
@@ -157,11 +95,7 @@ export default class Language extends React.Component {
     closeConfirmDone() {
         this.setState({
             showCloseConfirm: false,
-            deleteLanguage: {
-                id: null,
-                name: '',
-                level: ''
-            }
+            deleteLanguage: {}
         })
     }
 
@@ -173,24 +107,29 @@ export default class Language extends React.Component {
             <div className="row margined">
                 {this.state.showAddSection && < AddItem
                     header={AddItemHeader}
+                    componentId={this.props.componentId}
                     handleCancel={this.closeAddnewSection}
-                    handleChange={this.handleNewLanguageFields}
-                    handleAdd={this.addLanguage}
+                    setNewState={this.setNewLanguage}
+                    updateProfileData={this.props.updateProfileData}
+                    validateFunc={this.props.validateFunc}
+                    fullData={this.props.languageData}
                     value={this.state.newLanguage || {}}
                 />}
                 {/*Display handles edit as well*/}
                 <DisplayItem
                     rowHeader={RowHeader}
-                    data={this.props.languageData || []}
-                    component="Language"
+                    displayData={this.props.languageData || []}
+                    componentId={this.props.componentId}
                     showAddItem={this.showAddNewSection}
                     handleDelete={this.handleDelete}
                     handleEdit={this.handleEdit}
                     showEditConfirm={this.state.showEditConfirm}
                     editItem={this.state.editLanguage || {}}
-                    editHeader={AddItemHeader }
-                    handleEditFieldsChange={this.handleEditLanguageFields}
-                    updateEditedItem={this.updateEditedLanguage}
+                    editHeader={AddItemHeader}
+                    setEditState={this.setEditLanguage}
+                    validateFunc={this.props.validateFunc}
+                    updateProfileData={this.props.updateProfileData}
+                    fullData={this.props.languageData}
                     closeEditSection={this.closeEditSection}
                 />
                 <CloseConfirmation
