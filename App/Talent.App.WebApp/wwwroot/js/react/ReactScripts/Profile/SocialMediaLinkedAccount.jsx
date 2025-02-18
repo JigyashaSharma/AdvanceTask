@@ -107,7 +107,7 @@ export default class SocialMediaLinkedAccount extends React.PureComponent {
                     inputType="text"
                     label="LinkedIn"
                     name="linkedIn"
-                    value={this.state.newlinkedAccounts.linkedIn}
+                    value={this.state.newlinkedAccounts.linkedIn || ''}
                     controlFunc={this.handleChange}
                     maxLength={80}
                     placeholder="Enter your LinkedIn Url"
@@ -117,7 +117,7 @@ export default class SocialMediaLinkedAccount extends React.PureComponent {
                     inputType="text"
                     label="GitHub"
                     name="github"
-                    value={this.state.newlinkedAccounts.github}
+                    value={this.state.newlinkedAccounts.github || ''}
                     controlFunc={this.handleChange}
                     maxLength={80}
                     placeholder="Enter your GitHub Url"
@@ -135,7 +135,7 @@ export default class SocialMediaLinkedAccount extends React.PureComponent {
             <div className='row'>
                 <div className="ui sixteen wide column">
                     <Button as="a"
-                        href={this.props.linkedAccounts.linkedIn}
+                        href={this.props.linkedAccounts.linkedIn || "#"}
                         target="_blank"
                         primary icon labelPosition="left"
                         onClick={this.handleClick}
@@ -153,7 +153,7 @@ export default class SocialMediaLinkedAccount extends React.PureComponent {
                     </div>
                     </Button>
                     <Button as="a"
-                        href={this.props.linkedAccounts.github}
+                        href={this.props.linkedAccounts.github || "#"}
                         target="_blank" labelPosition="left"
                         className="ui black icon"
                         onClick={this.handleClick}

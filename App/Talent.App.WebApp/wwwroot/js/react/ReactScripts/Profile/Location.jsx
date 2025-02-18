@@ -21,14 +21,6 @@ export class Address extends React.Component {
         this.saveAddress = this.saveAddress.bind(this);
     }
 
-    componentDidMount() {
-        /*this.setState(
-            {
-                currentAddress: this.props.addressData
-            }
-        )*/
-
-    }
     componentDidUpdate(prevProps) {
         if (prevProps.addressData !== this.props.addressData) {
             this.setState(
@@ -44,7 +36,6 @@ export class Address extends React.Component {
     }
     handleChange(event) {
         const data = Object.assign({}, this.state.currentAddress)
-        //const data = Object.assign({}, this.props.linkedAccounts)
         data[event.target.name] = event.target.value
         if (event.target.name === "country") {
             data.city = '';
@@ -183,10 +174,6 @@ export class Address extends React.Component {
     renderDisplay() { 
         const country = this.props.addressData.country;
         const city = this.props.addressData.city;
-        //let address = '';
-        /*if (this.props.addressData.number || this.props.addressData.street || this.props.addressData.suburb || this.props.addressData.postCode) {
-            address = `${this.props.addressData.number}, ${this.props.addressData.street}, ${this.props.addressData.suburb}, ${this.props.addressData.postCode}`;
-        }*/
         const address = (this.props.addressData.number ? this.props.addressData.number : '') +
                   (this.props.addressData.street ? `, ${this.props.addressData.street}` : '') +
                   (this.props.addressData.suburb ? `, ${this.props.addressData.suburb}` : '') +

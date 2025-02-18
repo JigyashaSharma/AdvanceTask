@@ -99,7 +99,7 @@ export default class AccountProfile extends React.Component {
                     loaderData: updatedLoaderData
                 });
 
-                if (this.state.hasError === true) {
+                if (this.state.hasError) {
                     this.setState({
                         hasError: false
                     });

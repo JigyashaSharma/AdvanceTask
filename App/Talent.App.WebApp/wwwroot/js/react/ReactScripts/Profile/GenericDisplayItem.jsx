@@ -45,14 +45,14 @@ export default class DisplayItem extends React.Component {
         this.props.handleDelete(id);
     };
 
-    displayData(item, header) {
+    displayData(item, header, index) {
         //if data item is the one being edited skip it
         if (this.props.showEditConfirm && this.props.editItem && item.id === this.props.editItem.id) {
             return null;
         }
         //return the row of item
         return (
-            <tr key={item.id}>
+            <tr key={item.id ? item.id : index}>
                 {
                     Object.keys(header).map(key => (
                         <td key={key}> {item[header[key]]} </td>
@@ -137,8 +137,8 @@ export default class DisplayItem extends React.Component {
                         }
                 {/*Show rest of the items and skip the one that is being edited.*/}
                     
-                        {data && data.map(item => {
-                            return this.displayData(item, header);
+                        {data && data.map((item, index) => {
+                            return this.displayData(item, header, index);
                             })}      
                         </tbody>
                     </table>

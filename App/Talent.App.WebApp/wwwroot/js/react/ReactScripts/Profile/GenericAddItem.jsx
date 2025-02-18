@@ -111,7 +111,7 @@ export default class AddItem extends React.Component {
     }
     render() {
         const header = this.props.header;
-        if (!header || !this.props.value) {
+        if (!header || !Array.isArray(header) || header.length === 0 || !this.props.value) {
             return;
         }
         return (
