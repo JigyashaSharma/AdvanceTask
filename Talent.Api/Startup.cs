@@ -21,9 +21,11 @@ using Talent.Common.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using System.Security.Principal;
+using Swashbuckle.AspNetCore.Swagger;
 using Talent.Common.Security;
 using Talent.Api.Domain.Contracts;
 using Talent.Api.Domain.Services;
+using Microsoft.Extensions.FileProviders;
 
 namespace Talent.Api
 {
@@ -39,6 +41,12 @@ namespace Talent.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging(builder =>
+            {
+                builder.AddConsole()
+                       .SetMinimumLevel(LogLevel.Trace);  // Set to 'Trace' for detailed logs
+            });
+
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowWebAppAccess", builder =>
@@ -79,6 +87,16 @@ namespace Talent.Api
             services.AddScoped<IUserAppContext, UserAppContext>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IProfileService, ProfileService>();
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "My Talent API",
+                    Version = "v1"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,6 +105,18 @@ namespace Talent.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                // Enable middleware to serve generated Swagger as a JSON endpoint
+                app.UseSwagger();
+                // Enable middleware to serve Swagger UI (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Talent API V1");
+                    c.RoutePrefix = string.Empty;  // This makes Swagger UI available at the root (e.g., http://localhost:5000)
+                });
+
+                app.UseStaticFiles();  // Enable static file serving from wwwroot and other folders
+
             }
 
             app.UseMvc();

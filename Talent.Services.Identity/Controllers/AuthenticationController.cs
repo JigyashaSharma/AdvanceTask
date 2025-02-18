@@ -83,8 +83,8 @@ namespace Talent.Services.Identity.Controllers
             }
         }
 
-      
 
+        [HttpGet]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Get()
         {

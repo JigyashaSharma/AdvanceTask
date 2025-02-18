@@ -23,6 +23,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Talent.Common.Aws;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace Talent.Services.Profile
 {
@@ -78,7 +80,19 @@ namespace Talent.Services.Profile
             });
             services.AddScoped<IUserAppContext, UserAppContext>();
             services.AddScoped<IProfileService, ProfileService>();
+            services.AddScoped<IAwsService, AwsService>();
             services.AddScoped<IFileService, FileService>();
+
+            services.Configure<AwsOptions>(Configuration.GetSection("aws"));
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "My Profile API",
+                    Version = "v1"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -88,6 +102,17 @@ namespace Talent.Services.Profile
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Profile API V1");
+                c.RoutePrefix = string.Empty;
+            });
+
+            app.UseStaticFiles();  // Enable static file serving from wwwroot and other folders
+            
             app.UseCors("AllowWebAppAccess");
             app.UseMvc();
         }

@@ -15,6 +15,9 @@ export default class VideoUpload extends React.Component {
     }
 
     render() {
-        
+        return (
+            <div>
+            </div>
+        )
     }
 }

@@ -1,0 +1,102 @@
+﻿.rightMargin {
+    margin-right: 10px !important;
+}
+.leftMargin {
+    margin-left: 10px !important;
+}
+.topMargin {
+    margin-top: 10px !important;
+}
+
+.bottomMargin {
+    margin-bottom: 10px !important;
+}
+.addSectionMargin{
+    margin-top: 10px;
+    margin-bottom: 15px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.floatRight {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.iconContainer {
+    display: flex; /* Use flexbox to arrange items */
+    justify-content: flex-end; /* Align icons to the right */
+    gap: 10px; /* Optional: adds spacing between the icons */
+}
+
+.iconStyle {
+    cursor: pointer;
+    margin-right: 10px;
+    font-size: 15px;
+    transition: transform 0.2s ease;
+}
+
+.buttonIconAndTextAlignment {
+    display: flex;
+    align-items: center;
+}
+
+.paddingButton {
+    padding: 20px 20px;
+}
+.dropdown {
+    border-color: blue;
+}
+
+.radioInput {
+    background: none !important;
+    box-shadow: none !important;
+    margin-left: 10px !important;
+}
+
+.radioLabel {
+    background: none !important;
+    box-shadow: none !important;
+    margin-right: 10px !important;
+}
+
+.confirmPosition {
+    position: fixed; /* Fix the position relative to the viewport */
+    top: 50%; /* Vertically center */
+    left: 50%; /* Horizontally center */
+    transform: translate(-50%, -50%); /* Adjust for element's own dimensions */
+    width: 400px; /* Set a fixed width (or percentage like 80%) */
+    height: auto; /* Adjust height based on content */
+    max-width: 90%; /* Optional: set a maximum width to prevent stretching too far */
+    margin: 0; /* Remove default margin */
+    z-index: 9999; /* Ensure it is above other elements */
+    background-color: white; /* Background color for the dialog */
+    padding: 20px; /* Add padding inside the dialog */
+    border-radius: 8px; /* Optional: Rounded corners */
+    box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+.saveVisaStatus {
+    margin-bottom : 2px !important;
+}
+
+/* CameraIcon.css */
+.circle {
+    width: 100px !important; /* You can adjust the size */
+    height: 100px !important; /* You can adjust the size */
+    border-radius: 50% !important; /* Makes it circular */
+    /*background-color: #f0f0f0 !important; /* Optional: background color of the circle */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    border: 2px solid #000 !important; /* Optional: border color around the circle */
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80vh; /* Make the parent take full screen height */
+    margin-bottom: 4px;
+}

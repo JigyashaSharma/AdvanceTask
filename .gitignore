@@ -11,6 +11,7 @@
 **/node_modules/
 **/appsettings*
 **/launchSettings*
+**/dist*
 
 # Ignore personal files
 **/*.user

@@ -42,5 +42,11 @@ namespace Talent.Services.Profile.Domain.Contracts
 
         Task<IEnumerable<ClientViewModel>> GetClientListAsync(string recruiterId);
         Task<Employer> GetEmployer(string employerId);
+
+        Task<bool> DeleteLanguage(AddLanguageViewModel deleteLanguage, string updaterId);
+        Task<bool> DeleteEducation(AddEducationViewModel deleteEducation, string updaterId);
+        Task<bool> DeleteExperience(ExperienceViewModel deleteExperience, string updaterId);
+        Task<bool> DeleteSkill(AddSkillViewModel deleteSkill, string updaterId);
+        Task<bool> DeleteCertificate(AddCertificationViewModel deleteCertificate, string updaterId);
     }
 }
