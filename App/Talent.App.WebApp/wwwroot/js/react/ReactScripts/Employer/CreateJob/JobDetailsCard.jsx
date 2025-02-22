@@ -7,6 +7,7 @@ import { countryOptions } from '../common.js'
 import { JobCategories } from './JobCategories.jsx';
 import { Salary } from './Salary.jsx';
 import { Location } from './Location.jsx';
+import { ErrorMessage } from './ErrorMessage.jsx';
 
 export class JobDetailsCard extends React.Component {
     constructor(props) {
@@ -73,12 +74,18 @@ export class JobDetailsCard extends React.Component {
         const { jobDetails } = this.props;
         const { jobType } = jobDetails;
         //expires in 14 days by default
-        const expiryDate = this.props.expiryDate instanceof moment ? this.props.expiryDate : moment().add(14, 'days');
+        const endDate = jobDetails && jobDetails.endDate ? jobDetails.endDate instanceof moment ? jobDetails.endDate.toDate() : jobDetails.endDate : null;
+        const startDate = jobDetails && jobDetails.startDate ? jobDetails.startDate instanceof moment ? jobDetails.startDate.toDate() : jobDetails.startDate : null;
+        const expiryDate = this.props.expiryDate ? this.props.expiryDate instanceof moment ? this.props.expiryDate.toDate() : this.props.expiryDate : null;
+
+        const hasMissingJobDetails = !!Object.keys(this.props.formErrors).find(key => key.startsWith('jobDetails.'));
+
         return (
             <div className="ui segment">
                 <div className="content">
                     <div className="header">
                         Job Details
+                        <ErrorMessage isError={hasMissingJobDetails} errorMessage="Please provide the required fields in JobDetails" />
                      </div>
                 </div>
 
@@ -139,7 +146,7 @@ export class JobDetailsCard extends React.Component {
                                         *Start Date:
                                         <br />
                                         <DatePicker
-                                            selected={jobDetails.startDate}
+                                            selected={startDate}
                                             onChange={(date) => this.handleChangeDate(date, "startDate")}
                                             minDate={moment()}
                                         />
@@ -148,7 +155,7 @@ export class JobDetailsCard extends React.Component {
                                         End Date:
                                         <br />
                                         <DatePicker
-                                            selected={jobDetails.endDate}
+                                            selected={endDate}
                                             onChange={(date) => this.handleChangeDate(date, "endDate")}
                                             minDate={moment()}
                                         />

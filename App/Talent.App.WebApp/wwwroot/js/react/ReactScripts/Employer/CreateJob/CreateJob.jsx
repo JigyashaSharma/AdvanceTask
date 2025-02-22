@@ -12,7 +12,22 @@ import { ChildSingleInput } from '../../Form/SingleInput.jsx'
 import { JobDescription } from './JobDescription.jsx';
 import { JobSummary } from './JobSummary.jsx';
 import { BodyWrapper, loaderData } from '../../Layout/BodyWrapper.jsx';
+import Loading from '../../Layout/Loading.jsx';
+import { ErrorMessage } from './ErrorMessage.jsx';
 
+//Created it for validation
+const requiredFields = [
+    { name: 'title', message: 'Please enter the Title!!' },
+    { name: 'description', message: 'Please enter Description!!' },
+    { name: 'summary', message: 'Please enter Summary!!' },
+    { name: 'jobDetails.categories.category', message: 'Please select a Category!!' },
+    { name: 'jobDetails.categories.subCategory', message: 'Please select a SubCategory!!' },
+    { name: 'jobDetails.jobType', message: 'Please select JobType!!' },
+    { name: 'jobDetails.startDate', message: 'Please enter startDate!!' },
+    { name: 'expiryDate', message: 'Please enter expiryDate!!' },
+    { name: 'jobDetails.location.country', message: 'Please select Country!!' },
+    { name: 'jobDetails.location.city', message: 'Please select City!' },
+];
 export default class CreateJob extends React.Component {
     constructor(props) {
         super(props);
@@ -36,12 +51,17 @@ export default class CreateJob extends React.Component {
                     location: { country: "", city: ""}
                 }
             },
-            loaderData: loaderData
+            loaderData: loaderData,
+            formErrors: {},
+            heading: '',
+            backendError: '',
         }
         
         this.updateStateData = this.updateStateData.bind(this);
         this.addUpdateJob = this.addUpdateJob.bind(this);
         this.loadData = this.loadData.bind(this); 
+        this.addErrorMessage = this.addErrorMessage.bind(this);
+        this.validateField = this.validateField.bind(this);
    
         this.init = this.init.bind(this);
     };
@@ -69,6 +89,17 @@ export default class CreateJob extends React.Component {
             var link = param != "" ? `${listingApi}/listing/listing/GetJobByToEdit?id=` + param
                 : `${listingApi}/listing/listing/GetJobForCopy?id=` + copyJobParam;
             var cookies = Cookies.get('talentAuthToken');
+
+            if (param != '') {
+                this.setState({
+                    heading: "Edit Job"
+                });
+            } else {
+                this.setState({
+                    heading: "Copy Job"
+                });
+            }
+
             $.ajax({
                 url: link,
                 headers: {
@@ -84,20 +115,69 @@ export default class CreateJob extends React.Component {
                         res.jobData.jobDetails.endDate = res.jobData.jobDetails.endDate ? moment(res.jobData.jobDetails.endDate) : null;
                         res.jobData.expiryDate = res.jobData.expiryDate
                             ? moment(res.jobData.expiryDate) > moment()
-                                ? moment(res.jobData.expiryDate) : moment().add(14,'days') : null;
+                                ? moment(res.jobData.expiryDate) : moment().add(14, 'days') : null;
                         this.setState({ jobData: res.jobData })
                     } else {
-                        TalentUtil.notification.show(res.message, "error", null, null)
+                        this.setState({
+                            backendError: res.message
+                        });
+                        TalentUtil.notification.show(res.message, "error", null, null);
                     }
                 }.bind(this)
             })
-        }       
+        } else {
+            this.setState({
+                heading: "Create Job"
+            });
+        }
+        const newLoaderData = Object.assign({}, this.state.loaderData, { isLoading: false });
+        this.setState({
+            loaderData: newLoaderData
+        });
     }
+
+    //Add the required field to requiredFields array.
+    validateField() {
+        const missingFieldsTemp = requiredFields.reduce((acc, field) => {
+            const value = field.name.split('.').reduce((obj, prop) => obj && obj[prop], this.state.jobData);
+            if (!value || (Array.isArray(value) && value.length === 0)) {
+                const tempAcc = Object.assign({}, acc, { [field.name]: field.message });
+                return (tempAcc);
+            }
+            return acc;
+        }, {});
+
+        if (Object.keys(missingFieldsTemp).length > 0) {
+            this.setState({ formErrors: missingFieldsTemp });
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    addErrorMessage(message) {
+        this.setState(
+            { errorMessage: message }
+        )
+    }
+
     addUpdateJob() {
         var jobData = this.state.jobData;
-        console.log("data to save:", jobData);
-        //jobData.jobDetails.startDate = jobData.jobDetails.startDate.toDate();
-        console.log("date:", jobData.jobDetails.startDate);
+        if (moment.isMoment(jobData.expiryDate)) {
+            jobData.expiryDate = jobData.expiryDate.toDate();
+        }
+
+        const dataValid = this.validateField();
+        if (!dataValid) {
+            return;
+        } else {
+            this.setState(
+                {
+                    formErrors: {}
+                }
+            )
+        }
+
         var cookies = Cookies.get('talentAuthToken');   
         $.ajax({
             url: `${listingApi}/listing/listing/createUpdateJob`,
@@ -130,7 +210,14 @@ export default class CreateJob extends React.Component {
         console.log(data);
     }
    
-    render() {
+        render() {
+            if (this.state.loaderData.isLoading) {
+                return <Loading />;
+            }
+            if (this.state.backendError) {
+                return <Navigate to="/ManageJobs" />;
+            }
+
         return (
             <BodyWrapper reload={this.init} loaderData={this.state.loaderData}>
                 <section className="page-body">
@@ -138,7 +225,7 @@ export default class CreateJob extends React.Component {
                         <div className="ui grid">
                             <div className="row">
                                 <div className="sixteen wide center aligned padded column">
-                                    <h1>Create Job</h1>
+                                    <h1>{this.state.heading}</h1>
                                 </div>
                             </div>
 
@@ -158,8 +245,8 @@ export default class CreateJob extends React.Component {
                                                         value={this.state.jobData.title}
                                                         controlFunc={this.updateStateData}
                                                         maxLength={80}
-                                                        placeholder="Enter a title for your job"
-                                                        errorMessage="Please enter a valid title"
+                                                        errorMessage={this.state.formErrors.title || ''}
+                                                        isError={!!this.state.formErrors.title}
                                                     />
                                                     <h5>
                                                         *Description:
@@ -167,6 +254,8 @@ export default class CreateJob extends React.Component {
                                                     <JobDescription
                                                         description={this.state.jobData.description}
                                                         controlFunc={this.updateStateData}
+                                                        errorMessage={this.state.formErrors.description || ''}
+                                                        isError={!!this.state.formErrors.description}
                                                     />
                                                     <br />
                                                     <h5>
@@ -175,6 +264,8 @@ export default class CreateJob extends React.Component {
                                                     <JobSummary
                                                         summary={this.state.jobData.summary}
                                                         updateStateData={this.updateStateData} />
+                                                        errorMessage={this.state.formErrors.summary || ''}
+                                                        isError={!!this.state.formErrors.summary}
                                                     <br />
 
                                                     <br />
@@ -190,6 +281,7 @@ export default class CreateJob extends React.Component {
                                                         jobDetails={this.state.jobData.jobDetails}
                                                         updateStateData={this.updateStateData}
                                                         createClick={this.addUpdateJob}
+                                                        formErrors={this.state.formErrors}
                                                     />
                                                 </div>
                                             </div>
