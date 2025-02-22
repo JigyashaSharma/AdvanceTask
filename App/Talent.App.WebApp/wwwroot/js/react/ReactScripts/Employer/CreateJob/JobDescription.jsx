@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import CkEditor from "react-ckeditor-component";
-
+import { ErrorMessage } from './ErrorMessage.jsx';
 
 export class JobDescription extends React.Component {
     constructor(props) {
@@ -36,6 +36,7 @@ export class JobDescription extends React.Component {
                         "change": this.onChange
                     }}
                 />
+                <ErrorMessage isError={this.props.isError} errorMessage={this.props.errorMessage} />
             </section>
         )
     }
