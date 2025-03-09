@@ -24,6 +24,16 @@ namespace Talent.Common.Models
         public string MobilePhone { get; set; }
         public bool IsMobilePhoneVerified { get; set; }
 
+        /* Adding below fields to make User consistent with DB. Otherwise it will give error.
+         * We can do this handling while querying DB and explicitly giving what we need.
+         * But this is much cleaner approach
+         */
+        public string TalentId { get; set; }
+        public string EmployerId { get; set; }
+        public string RecruiterId { get; set; }
+        public string PrimaryCV { get; set; }
+        public List<Dictionary<string, object>> TalentCVs { get; set; } = new List<Dictionary<string, object>>();
+
         public Address Address { get; set; }
         public string Nationality { get; set; }
         public string VisaStatus { get; set; }
@@ -50,6 +60,7 @@ namespace Talent.Common.Models
         public string UpdatedBy { get; set; }
         public bool IsDeleted { get; set; }
         public Login Login { get; set; }
+        public string UserType { get; set; }
 
         public User()
         {

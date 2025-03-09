@@ -83,14 +83,14 @@
 
 /* CameraIcon.css */
 .circle {
-    width: 100px !important; /* You can adjust the size */
-    height: 100px !important; /* You can adjust the size */
-    border-radius: 50% !important; /* Makes it circular */
-    /*background-color: #f0f0f0 !important; /* Optional: background color of the circle */
+    width: 100px !important;
+    height: 100px !important;
+    border-radius: 10px !important; /* Makes it circular */
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-    border: 2px solid #000 !important; /* Optional: border color around the circle */
+    border: 2px solid #000 !important;
+    overflow: hidden;
 }
 
 .container {
@@ -99,4 +99,131 @@
     align-items: center;
     width: 80vh; /* Make the parent take full screen height */
     margin-bottom: 4px;
+}
+
+.talentCard {
+    height: 550px !important;
+    width: 650px !important;
+    border: 1px solid lightgray !important;
+}
+
+.companyProfileCircle {
+    width: 80px !important;
+    height: 80px !important;
+    border-radius: 50% !important; /* Makes it circular */
+    background-color: #d6d6d6 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    border: 2px solid #000 !important;
+    overflow: hidden !important;
+}
+
+.card {
+    height: 300px !important; /* Adjust as needed */
+    width: 300px !important;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    position: relative; /* Allows transform and positioning */
+}
+
+.content {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.cardContentExtras {
+    display: flex !important;
+    justify-content: space-between !important;
+}
+
+.imageIcon{
+    color: white !important;
+}
+
+.removing {
+    opacity: 0 !important; /* Fade out effect */
+    transform: translateY(-20px) !important; /* Optional: move the card up for smoother exit */
+}
+
+.new {
+    opacity: 0 !important;
+    transform: translateY(20px) !important; /* Optional: start new card from below */
+    animation: fadeIn 0.3s ease-in-out forwards !important;
+}
+
+.cardImageContainer {
+    width: 50% !important; /* Half the width of the card */
+    height: 100% !important; /* Full height of the card content */
+    overflow: hidden !important; /* Ensure the image doesn't overflow */
+    margin: 0; /* Remove any margins */
+    padding: 0; /* Remove padding */
+}
+
+.cardImage {
+    width: 100% !important; /* Ensure the image fills half the width */
+    height: 100% !important; /* Ensure the image fills the height of the container */
+    object-fit: cover !important; /* Ensures the image covers the container without stretching */
+}
+
+.cardHeader {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+.cardBody {
+    display: flex !important;
+    flex-direction: row !important;
+    height: 100% !important; /* Ensures the body takes up the remaining space */
+}
+
+.cardDescription {
+    flex: 1 !important; /* Ensures description takes up remaining space */
+    display: flex !important;
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+/*scroll bar styles*/
+.scroll {
+    overflow-y: scroll;
+    max-height: calc(2 * 410px);
+}
+
+.talentFeedMain {
+    display: flex;
+    justify-content: space-between;
+    max-width:1400px;
+    margin: 0 auto;
+}
+
+.talentFeedSideDiv {
+    width: 300px;
+}
+
+.talentFeedCardDiv {
+    width: 700px;
+}
+
+.skillsDiv{
+    display: flex !important;
+    flex-wrap: wrap !important;
+}
+
+.skillStyle {
+    margin-right: 5px !important;
+    margin-bottom: 5px !important;
+    border-radius: 5px !important;
+    padding: 10px 20px !important;
+    border: 2px solid #2185d0 !important;
+    background-color: transparent !important;
+}
+
+.uiCenterAligned {
+    display: flex !important;
+    justify-content: center; /* Centers text horizontally */
+    align-items: center; /* Centers text vertically */
+    height: 100% !important;
+    width: 100%; /* Ensure it takes full width of the parent */
 }

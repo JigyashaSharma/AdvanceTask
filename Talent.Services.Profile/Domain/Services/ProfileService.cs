@@ -12,6 +12,9 @@ using Talent.Services.Profile.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Talent.Common.Security;
+using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver.Linq;
+using Microsoft.CodeAnalysis;
 
 namespace Talent.Services.Profile.Domain.Services
 {
@@ -724,13 +727,81 @@ namespace Talent.Services.Profile.Domain.Services
 
         public async Task<IEnumerable<TalentSnapshotViewModel>> GetTalentSnapshotList(string employerOrJobId, bool forJob, int position, int increment)
         {
-            //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                var query = _userRepository.GetQueryable();
+
+                var paginatedUsers = query
+                    .Skip((position) * increment)
+                    .Take(increment)
+                    .ToList();
+
+                List<TalentSnapshotViewModel> snapshotUserList = new List<TalentSnapshotViewModel>();
+
+                if (paginatedUsers.Count() == 0)
+                {
+                    //return empty list
+                    return snapshotUserList;
+                }
+                //Iterate over each user and form TalentSnapshotViewModel object.
+                foreach (var user in paginatedUsers)
+                {
+                    List<AddSkillViewModel> skillViewModel = GetSkillModelFromUserSkill(user.Skills);
+
+                    List<ExperienceViewModel> experienceViewModels = GetExperienceModelFromExperiences(user.Experience);
+
+                    string currentEmployer = "";
+                    string currentPosition = "";
+
+                    //Find the current employer based on End date. If its null make it as current employer
+                    foreach (var experience in user.Experience)
+                    {
+                        if (experience.End == null)
+                        {
+                            currentEmployer = experience.Company;
+                            currentPosition = experience.Position;
+                        }
+                    }
+
+                    //create skills lists
+                    List<string> skills = new List<string>();
+                    foreach (UserSkill skill in user.Skills)
+                    {
+                        skills.Add(skill.Skill);
+                    }
+
+                    //create the TalentSnapshotViewModel object
+                    TalentSnapshotViewModel snapshotUser = new TalentSnapshotViewModel()
+                    {
+                        Id = user.Id,
+                        Name = user.FirstName + " " + user.LastName,
+                        PhotoId = user.ProfilePhotoUrl,
+                        VideoUrl = user.VideoName,
+                        CVUrl = user.CvName,
+                        Summary = user.Summary,
+                        CurrentEmployment = currentEmployer,
+                        Position = currentPosition,
+                        Visa = user.VisaStatus,
+                        Skills = skills,
+                        LinkedIn = user.LinkedAccounts.LinkedIn,
+                        Github = user.LinkedAccounts.Github
+                    };
+                    //add TalentSnapshotViewModel to list
+                    snapshotUserList.Add(snapshotUser);
+                }
+                return snapshotUserList;
+            }
+            catch (Exception ex)
+            {
+                //logging can be done
+                //current thwowing it again since we are handling it in caller.
+                throw ex;
+            }
+            
         }
 
         public async Task<IEnumerable<TalentSnapshotViewModel>> GetTalentSnapshotList(IEnumerable<string> ids)
         {
-            //Your code here;
             throw new NotImplementedException();
         }
 
@@ -738,7 +809,7 @@ namespace Talent.Services.Profile.Domain.Services
 
         public async Task<IEnumerable<TalentSuggestionViewModel>> GetFullTalentList()
         {
-            //Your code here;
+            
             throw new NotImplementedException();
         }
 
