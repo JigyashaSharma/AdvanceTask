@@ -206,9 +206,11 @@
     width: 700px;
 }
 
-.skillsDiv{
+.skillsDiv {
     display: flex !important;
     flex-wrap: wrap !important;
+    overflow-y: auto; /* Optional: If you want skills section to scroll within the card */
+    max-height: 60px; /* Limit the height of the skills section */
 }
 
 .skillStyle {

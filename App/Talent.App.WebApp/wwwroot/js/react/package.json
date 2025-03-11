@@ -21,7 +21,8 @@
   },
   "scripts": {
     "start": "webpack-dev-server --env.NODE_ENV=development --mode development --no-cache --open",
-    "build": "webpack --env.NODE_ENV=production --mode production"
+    "build": "webpack --env.NODE_ENV=production --mode production",
+    "build-dev": "webpack --env.NODE_ENV=development  --mode development"
   },
   "author": "MVP Studio",
   "license": "ISC",

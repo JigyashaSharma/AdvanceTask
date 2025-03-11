@@ -24,20 +24,12 @@ namespace Talent.Common.Models
         public string MobilePhone { get; set; }
         public bool IsMobilePhoneVerified { get; set; }
 
-        /* Adding below fields to make User consistent with DB. Otherwise it will give error.
-         * We can do this handling while querying DB and explicitly giving what we need.
-         * But this is much cleaner approach
-         */
-        public string TalentId { get; set; }
-        public string EmployerId { get; set; }
-        public string RecruiterId { get; set; }
-        public string PrimaryCV { get; set; }
-        public List<Dictionary<string, object>> TalentCVs { get; set; } = new List<Dictionary<string, object>>();
-
         public Address Address { get; set; }
         public string Nationality { get; set; }
         public string VisaStatus { get; set; }
-        public JobSeekingStatus JobSeekingStatus { get; set; }
+        // Store JobSeekingStatus as BsonValue (can hold any type).
+        // Since I found in DB that it is string at places and Object at others.
+        public BsonValue JobSeekingStatus { get; set; }
         public DateTime? VisaExpiryDate { get; set; }
         public string Summary { get; set; }
         public string Description { get; set; }

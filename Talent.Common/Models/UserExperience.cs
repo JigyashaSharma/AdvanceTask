@@ -12,6 +12,7 @@ namespace Talent.Common.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public String Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
         public String UserId { get; set; }
         public String Company { get; set; }
         public String Position { get; set; }
