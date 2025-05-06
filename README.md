@@ -19,16 +19,15 @@ Please follow the instructions below to understand how to get started. If you ha
   * Job seeking status
   * Photo upload
 
-[Click here](http://git.mvp.studio/talent-standard-tasks/talent-standard-tasks/wikis/guides/standard-task-module1) for Module 1 details.
 
   * Module 2 : Talent Feed page
   * Front-end
     * Add ajax calls to retrieve data from the controllers
   * Back-end 
     * Build action methods in controllers and in services to fetch data from the database
-	
-[Click here](http://git.mvp.studio/talent-standard-tasks/talent-standard-tasks/wikis/guides/standard-task-module2) for Module 2 details.
 
+## Deployed App url
+https://talentappwebapp20250209184040.azurewebsites.net/
 
 ## Guides to get started
 
