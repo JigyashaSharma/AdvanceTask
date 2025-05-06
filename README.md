@@ -1,6 +1,6 @@
 ## Talent Standard Task Code Repository
 
-This project I did at as part of MVP Studio internship to understand how ReactJs, C# Web Api, MongoDb is used in Talent Code Architecture for the candidate role.
+This project I did as part of MVP Studio internship to understand how ReactJs, C# Web Api, MongoDb is used in Talent Code Architecture. Tasks below give more details on the feature completed as part of this project.
 
 ## Tasks
 
