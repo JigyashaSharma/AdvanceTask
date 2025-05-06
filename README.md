@@ -2,7 +2,7 @@
 
 This project I did at as part of MVP Studio internship to understand how ReactJs, C# Web Api, MongoDb is used in Talent Code Architecture for the candidate role.
 
-## Standard tasks
+## Tasks
 
 * Module 1 : Talent profile page
   * LinkedIn url & GitHub url
@@ -18,27 +18,21 @@ This project I did at as part of MVP Studio internship to understand how ReactJs
   * Photo upload
 
   * Module 2 : Talent Feed page
-  * Front-end
-    * Add ajax calls to retrieve data from the controllers
-  * Back-end 
-    * Build action methods in controllers and in services to fetch data from the database
+    * Front-end
+      * Design the UI according to the screenshots below and display all talent data as a scrollable list of cards.
+      * Display employer profile data as a single card on the left side of the page.
+    * Back-end
+      * Build action methods in controllers and in services to fetch talent data and current employer profile data from the database.
 
 ## Deployed App url
 https://talentappwebapp20250209184040.azurewebsites.net/
+How to access the feature created in the TaskL
+* Module 1: Talent Profile Page. Follow below steps see the feature listes for Module 1
+  * Login as Talent.
+  * Create the Profile by adding the details.
+* Module 2: Login as Employer and checkout the Talent Feed Page.
 
 ## Guides to get started
-
-### React tutorials/resources
-* https://reactjs.org/docs/hello-world.html
-* MVP Studio React Training.pdf can be found here
-ReactExamples.zip can be found [here](https://drive.google.com/file/d/1dXZeb3hmMsYbE1hmGEkb4_hyOkNiAbPa/view?usp=sharing)
-
-React coding examples in ReactExamples.zip:
-*ReactHelloWorld.html: Printing hello world using React
-*ReactTimeline.css: CSS File for Timeline example
-*ReactTimeline.html: React components and container example
-*ReactTimelinePassObject.html: Passing a prop as an attribute and javascript object example
-*ReactTimelinePassArray.html : Passing an array of javascript objects example
 
 **Note : Make sure that you have Visual Studio 2017 installed in your computer.
 Visual Studio 2015 does not work with ReactJS**
