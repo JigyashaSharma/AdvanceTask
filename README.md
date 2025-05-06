@@ -1,8 +1,6 @@
 ## Talent Standard Task Code Repository
 
-This project will help interns at MVP Studio to understand how ReactJs, C# Web Api, MongoDb is used in Talent Code Architecture. 
-
-Please follow the instructions below to understand how to get started. If you have any questions, please check if it has been asked on QuestionHub or raise the question there to get support. 
+This project I did at as part of MVP Studio internship to understand how ReactJs, C# Web Api, MongoDb is used in Talent Code Architecture for the candidate role.
 
 ## Standard tasks
 
@@ -18,7 +16,6 @@ Please follow the instructions below to understand how to get started. If you ha
   * Visa status
   * Job seeking status
   * Photo upload
-
 
   * Module 2 : Talent Feed page
   * Front-end
@@ -43,14 +40,6 @@ React coding examples in ReactExamples.zip:
 *ReactTimelinePassObject.html: Passing a prop as an attribute and javascript object example
 *ReactTimelinePassArray.html : Passing an array of javascript objects example
 
-### Do’s and don’ts
-See the [coding guidelines](http://git.mvp.studio/talent-competition/talent-competition/wikis/guides/coding-guidelines) and [FAQ](http://git.mvp.studio/talent-competition/talent-competition/wikis/guides/faqs)  
-Please try not to add styles inside the jsx file. Instead, please add your styles to TalentTheme.css.  
-Please use ES6, jsx, use state  
-Limit your use of javascript or jQuery - jQuery is required for AJAX, but very little else.  
-Use AJAX to get/send data to the controller  
-Please use plain javascript not typescript  
-
 **Note : Make sure that you have Visual Studio 2017 installed in your computer.
 Visual Studio 2015 does not work with ReactJS**
 
@@ -64,7 +53,6 @@ Install npm util packages:
 `webpack -version`
 
 ### Launch Talent project
-[Check the wiki](http://git.mvp.studio/talent-competition/talent-competition/wikis/guides/Starting-the-project) for more details.
 * Get the latest source via Source Control Explorer
 * Run webpack:
 `cd C:\Talent\Talent\App\Talent.App.WebApp\wwwroot\js\react`
@@ -72,7 +60,6 @@ Install npm util packages:
 * Launch Talent.WebApp project in Visual Studio. Register an account using your email address and log in.
 
 ### Project Structure  
-[Check the wiki](http://git.mvp.studio/talent-competition/talent-competition/wikis/guides/project-structure) for more details.
  - Web Application:
     - `Talent.WebApp` : All frontend files are located here
  - Microservices:
@@ -88,5 +75,3 @@ Install npm util packages:
 * Forgetting to turn on webpack : `npm run build`
 * Forgetting to clear the cache
 
-### How to connect to the database
-[Click here](http://git.mvp.studio/talent-competition/talent-competition/wikis/guides/mongo-db) for more details.
