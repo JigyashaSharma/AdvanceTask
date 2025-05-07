@@ -26,7 +26,7 @@ This project I did as part of MVP Studio internship to understand how ReactJs, C
 
 ## Deployed App url
 https://talentappwebapp20250209184040.azurewebsites.net/
-How to access the feature created in the TaskL
+- How to access the feature created in the TaskL
 * Module 1: Talent Profile Page. Follow below steps see the feature listes for Module 1
   * Login as Talent.
   * Create the Profile by adding the details.
