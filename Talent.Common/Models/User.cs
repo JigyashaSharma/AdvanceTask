@@ -27,7 +27,9 @@ namespace Talent.Common.Models
         public Address Address { get; set; }
         public string Nationality { get; set; }
         public string VisaStatus { get; set; }
-        public JobSeekingStatus JobSeekingStatus { get; set; }
+        // Store JobSeekingStatus as BsonValue (can hold any type).
+        // Since I found in DB that it is string at places and Object at others.
+        public BsonValue JobSeekingStatus { get; set; }
         public DateTime? VisaExpiryDate { get; set; }
         public string Summary { get; set; }
         public string Description { get; set; }
@@ -50,6 +52,7 @@ namespace Talent.Common.Models
         public string UpdatedBy { get; set; }
         public bool IsDeleted { get; set; }
         public Login Login { get; set; }
+        public string UserType { get; set; }
 
         public User()
         {

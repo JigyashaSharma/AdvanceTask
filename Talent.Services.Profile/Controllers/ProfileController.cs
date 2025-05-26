@@ -483,11 +483,11 @@ namespace Talent.Services.Profile.Controllers
 
         [HttpGet("getTalent")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "recruiter, employer")]
-        public async Task<IActionResult> GetTalentSnapshots(FeedIncrementModel feed)
+        public async Task<IActionResult> GetTalentSnapshots([FromQuery]FeedIncrementModel feed)
         {
             try
             {
-                var result = (await _profileService.GetTalentSnapshotList(_userAppContext.CurrentUserId, false, feed.Position, feed.Number)).ToList();
+                var result = await _profileService.GetTalentSnapshotList(_userAppContext.CurrentUserId, false, feed.Position, feed.Number);
 
                 // Dummy talent to fill out the list once we run out of data
                 //if (result.Count == 0)

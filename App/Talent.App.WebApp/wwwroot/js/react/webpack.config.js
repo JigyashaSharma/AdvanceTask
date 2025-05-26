@@ -6,7 +6,12 @@ module.exports = (env) => {
 
     const currentEnv = env.NODE_ENV || 'development';
     const envFile = `.env.${currentEnv}`;
-    dotenv.config({ path: envFile });
+    //dotenv.config({ path: envFile });
+    const envVariables = dotenv.config({ path: envFile }).parsed || process.env;
+    const envKeys = Object.keys(envVariables).reduce((prev, key) => {
+        prev[`process.env.${key}`] = JSON.stringify(envVariables[key]);
+        return prev;
+    }, {});
 
     return {
         context: __dirname,

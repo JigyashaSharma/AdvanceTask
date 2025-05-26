@@ -12,6 +12,10 @@ using Talent.Services.Profile.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Talent.Common.Security;
+using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver.Linq;
+using Microsoft.CodeAnalysis;
+using MongoDB.Bson.Serialization;
 
 namespace Talent.Services.Profile.Domain.Services
 {
@@ -73,6 +77,10 @@ namespace Talent.Services.Profile.Domain.Services
         public List<AddSkillViewModel> GetSkillModelFromUserSkill(List<UserSkill> skills)
         {
             List<AddSkillViewModel> skillsModel = new List<AddSkillViewModel>();
+            if (skills == null)
+            {
+                return skillsModel;
+            }
             foreach (var userSkill in skills)
             {
                 if (userSkill.IsDeleted == false)
@@ -133,6 +141,10 @@ namespace Talent.Services.Profile.Domain.Services
         public List<ExperienceViewModel> GetExperienceModelFromExperiences(List<UserExperience> experiences)
         {
             List<ExperienceViewModel> experiencesModel = new List<ExperienceViewModel>();
+            if (experiences == null)
+            {
+                return experiencesModel;
+            }
             foreach (var userExperience in experiences)
             {
                 if (userExperience.IsDeleted == false)
@@ -171,6 +183,21 @@ namespace Talent.Services.Profile.Domain.Services
 
             List<ExperienceViewModel> experienceViewModels = GetExperienceModelFromExperiences(user.Experience);
 
+            //Set the JobSeekingStatus as object
+            JobSeekingStatus jobStatus = new JobSeekingStatus();
+            
+            if(user.JobSeekingStatus != null)
+            {
+                if(user.JobSeekingStatus.BsonType == BsonType.String)
+                {
+                    jobStatus.Status = user.JobSeekingStatus.AsString;
+                }
+                else if(user.JobSeekingStatus.BsonType == BsonType.Document)
+                {
+                    jobStatus = BsonSerializer.Deserialize<JobSeekingStatus>(user.JobSeekingStatus.AsBsonDocument);
+                }
+            }
+
 
             var result = new TalentProfileViewModel
             {
@@ -195,7 +222,7 @@ namespace Talent.Services.Profile.Domain.Services
                 Summary = user.Summary,
                 Description = user.Description,
                 LinkedAccounts = user.LinkedAccounts,
-                JobSeekingStatus = user.JobSeekingStatus,
+                JobSeekingStatus = jobStatus,
 
                 Languages = languagesViewModel,
                 Skills = skillViewModel,
@@ -301,7 +328,7 @@ namespace Talent.Services.Profile.Domain.Services
                 existingUser.ProfilePhotoUrl = model.ProfilePhotoUrl;
                 existingUser.CvName = model.CvName;
                 existingUser.LinkedAccounts = model.LinkedAccounts;
-                existingUser.JobSeekingStatus = model.JobSeekingStatus;
+                existingUser.JobSeekingStatus = model.JobSeekingStatus.ToBsonDocument();
                 existingUser.Summary = model.Summary;
                 existingUser.Description = model.Description;
 
@@ -724,13 +751,96 @@ namespace Talent.Services.Profile.Domain.Services
 
         public async Task<IEnumerable<TalentSnapshotViewModel>> GetTalentSnapshotList(string employerOrJobId, bool forJob, int position, int increment)
         {
-            //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                var query = _userRepository.GetQueryable();
+
+                var paginatedUsers = query
+                    .Skip((position) * increment)
+                    .Take(increment)
+                    .Select(u => new TalentToSnapshot {
+                        Id = u.Id,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        ProfilePhotoUrl = u.ProfilePhotoUrl,
+                        VideoName = u.VideoName,
+                        CvName = u.CvName,
+                        Summary = u.Summary,
+                        VisaStatus = u.VisaStatus,
+                        Skills = u.Skills,
+                        Experience = u.Experience,
+                        LinkedAccounts = u.LinkedAccounts
+                    })
+                    .ToList();
+
+                List<TalentSnapshotViewModel> snapshotUserList = new List<TalentSnapshotViewModel>();
+
+                if (paginatedUsers.Count() == 0)
+                {
+                    //return empty list
+                    return snapshotUserList;
+                }
+                //Iterate over each user and form TalentSnapshotViewModel object.
+                foreach (var user in paginatedUsers)
+                {
+                    string currentEmployer = "";
+                    string currentPosition = "";
+
+                    //Find the current employer based on End date. If its null make it as current employer
+                    if(user.Experience !=  null)
+                    {
+                        foreach (var experience in user.Experience)
+                        {
+                            if (experience.End == null)
+                            {
+                                currentEmployer = experience.Company;
+                                currentPosition = experience.Position;
+                            }
+                        }
+                    }
+
+                    //create skills lists
+                    List<string> skills = new List<string>();
+                    if(user.Skills != null)
+                    {
+                        foreach (UserSkill skill in user.Skills)
+                        {
+                            skills.Add(skill.Skill);
+                        }
+                    }
+
+                    //create the TalentSnapshotViewModel object
+                    TalentSnapshotViewModel snapshotUser = new TalentSnapshotViewModel()
+                    {
+                        Id = user.Id,
+                        Name = (user?.FirstName ?? "")+ " " + (user?.LastName ?? ""),
+                        PhotoId = user?.ProfilePhotoUrl,
+                        VideoUrl = user?.VideoName,
+                        CVUrl = user?.CvName,
+                        Summary = user?.Summary,
+                        CurrentEmployment = currentEmployer,
+                        Position = currentPosition,
+                        Visa = user?.VisaStatus,
+                        Skills = skills,
+                        LinkedIn = user?.LinkedAccounts?.LinkedIn,
+                        Github = user?.LinkedAccounts?.Github
+                    };
+                    //add TalentSnapshotViewModel to list
+                    snapshotUserList.Add(snapshotUser);
+                }
+                return snapshotUserList;
+            }
+            catch (Exception ex)
+            {
+                //logging can be done
+                //current thwowing it again since we are handling it in caller.
+                throw ex;
+            }
+            
         }
 
         public async Task<IEnumerable<TalentSnapshotViewModel>> GetTalentSnapshotList(IEnumerable<string> ids)
         {
-            //Your code here;
             throw new NotImplementedException();
         }
 
@@ -738,7 +848,7 @@ namespace Talent.Services.Profile.Domain.Services
 
         public async Task<IEnumerable<TalentSuggestionViewModel>> GetFullTalentList()
         {
-            //Your code here;
+            
             throw new NotImplementedException();
         }
 
